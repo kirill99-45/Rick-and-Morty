@@ -25,9 +25,17 @@ const routes: Array<RouteRecordRaw> = [
     component: pages.CharactersPage,
   },
   {
+    path: '/characters/:id',
+    component: pages.CharacterPage,
+  },
+  {
     path: '/locations',
     component: pages.LocationsPage,
   },
+  {
+    path: '/locations/:id',
+    component: pages.LocationPage,
+  }
 ]
 
 const router = createRouter({
