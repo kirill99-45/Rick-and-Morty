@@ -16,7 +16,7 @@
                     Location: 
                     <span>{{ character.location?.name }}</span>
                 </h3>
-            <router-link to="/" class="character-card__link">
+            <router-link :to="'/characters/' + character.id" class="character-card__link ">
                 Узнать больше
             </router-link>
         </div>
@@ -27,7 +27,7 @@
 import axios from 'axios';
 import { defineComponent } from 'vue';
 
-interface ICharacter {
+export interface ICharacter {
     created: string,
     name: string,
     episode: string[],
@@ -76,7 +76,7 @@ export default defineComponent({
             if (status === 'alive') return GREEN
             else if (status === 'dead') return RED
             else return GRAY
-        }
+        },
     },
     mounted() {
         this.getAll()
