@@ -1,6 +1,6 @@
 <template>
     <li class="episode__card">
-        <router-link :to="('/episodes/' + episode.id)">
+        <router-link :to="'/episodes/' + episode.id">
             <h4>Название: <h3 class="card__title">{{ episode.name }}</h3>
             </h4>
             <h4>Серия № <h3>{{ episode.id }}</h3>
@@ -21,14 +21,13 @@ export default defineComponent({
             type: Object,
             required: true,
         }
-    }
+    },
 })
 
 </script>
 
 <style scoped lang="scss">
 .episode__card {
-    border: solid $color-green;
     background-color: #3c3e44;
     border-radius: 12px;
     padding: 10px;
@@ -60,6 +59,10 @@ export default defineComponent({
                 text-align: left;
             }
         }
+    }
+
+    &:hover {
+        outline: solid $color-green;
     }
 }
 </style>

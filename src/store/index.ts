@@ -1,32 +1,6 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { pages } from './../pages/index';
+import { createStore } from 'vuex'
 
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    component : pages.HomePage,
-  },
-  {
-    path: '/episodes',
-    component : pages.EpisodesPage,
-  },
-  {
-    path: '/episodes/:id',
-    component : pages.EpisodePage,
-  },
-  {
-    path: '/characters',
-    component : pages.CharactersPage,
-  },
-  {
-    path: '/locations',
-    component : pages.LocationsPage,
-  },
-]
-
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes
+export default createStore({
+  modules: {
+  }
 })
-
-export default router
