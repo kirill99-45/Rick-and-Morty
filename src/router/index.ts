@@ -1,40 +1,44 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { pages } from './../pages/index';
 
-const routes: Array<RouteRecordRaw> = [
+import {
+  HomePage, EpisodesPage, EpisodePage, CharactersPage, CharacterPage, LocationsPage, LocationPage
+} from './../pages/index';
+
+export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    component: pages.HomePage,
+    name: 'home',
+    component: HomePage,
   },
   {
     path: '/episodes/',
-    component: pages.EpisodesPage,
-    // children: [
-    //   {
-    //     path: '/:id',
-    //     component: pages.EpisodePage,
-    //   }
-    // ]
+    name: 'episodes',
+    component: EpisodesPage,
   },
   {
     path: '/episodes/:id',
-    component: pages.EpisodePage,
+    name: 'selected episode',
+    component: EpisodePage,
   },
   {
     path: '/characters',
-    component: pages.CharactersPage,
-  },
+    name: 'characters',
+    component: CharactersPage,
+  },  
   {
     path: '/characters/:id',
-    component: pages.CharacterPage,
+    name: 'character',
+    component: CharacterPage,
   },
   {
     path: '/locations',
-    component: pages.LocationsPage,
+    name: 'locations',
+    component: LocationsPage,
   },
   {
     path: '/locations/:id',
-    component: pages.LocationPage,
+    name: 'selected location',
+    component: LocationPage,
   }
 ]
 

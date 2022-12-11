@@ -6,9 +6,6 @@
     <main class="app__main">
       <router-view />
     </main>
-    <footer class="app__footer">
-      ЭТО ПОДВАЛ
-    </footer>
   </div>
 </template>
 
@@ -66,20 +63,9 @@ export default defineComponent({
   .app__main {
     width: 100%;
     background-color: #202329;
-    min-height: 100vh;
+    min-height: 95vh;
     display: flex;
     justify-content: center;
-    align-items: center;
-  }
-
-  .app__footer {
-    width: 100%;
-    background-color: gray;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 800;
   }
 }
 </style>

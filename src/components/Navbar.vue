@@ -1,16 +1,15 @@
 <template>
     <nav>
-        <router-link to="/">Главная страница</router-link>
-        <router-link to="/episodes">Эпизоды</router-link>
-        <router-link to="/characters">Герои</router-link>
-        <router-link to="/locations">Локации</router-link>
+        <router-link :to="{ name: 'home' }">Главная страница</router-link>
+        <router-link :to="{ name: 'episodes' }"> Эпизоды</router-link>
+        <router-link :to="{ name: 'characters' }"> Герои</router-link>
+        <router-link :to="{ name: 'locations' }"> Локации</router-link>
     </nav>
 </template>
 
 <script lang="ts">
 
 export default {
-    
 }
 
 </script>
