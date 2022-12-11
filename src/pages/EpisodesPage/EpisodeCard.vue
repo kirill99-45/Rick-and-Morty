@@ -1,6 +1,6 @@
 <template>
     <li class="episode__card">
-        <router-link :to="'/episodes/' + episode.id">
+        <router-link :to="{ name: 'selected episode', params: { id: episode.id }}">
             <h4>Название: <h3 class="card__title">{{ episode.name }}</h3>
             </h4>
             <h4>Серия № <h3>{{ episode.id }}</h3>
@@ -62,7 +62,7 @@ export default defineComponent({
     }
 
     &:hover {
-        outline: solid $color-green;
+        outline: solid $color-orange;
     }
 }
 </style>

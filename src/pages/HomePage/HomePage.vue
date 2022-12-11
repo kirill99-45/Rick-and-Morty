@@ -1,23 +1,10 @@
 <template>
     <div class="home__wrapper">
         <ul>
-            <li class="routes-card__wrapper" title="Перейти">
-                <router-link to="/episodes">
-                    <img src="https://www.kp.ru/putevoditel/serialy/wp-content/uploads/2021/06/rik-i-morti-4-8.jpg" alt="Изображение ссылки"/>
-                    <h3>Эпизоды</h3>
-                </router-link>
-            </li>
-            <li class="routes-card__wrapper" title="Перейти">
-                <router-link to="/characters">
-                    <img src="https://proprikol.ru/wp-content/uploads/2020/12/kartinki-rik-i-morti-29.jpg" alt="Изображение ссылки"/>
-                    <h3>Герои</h3>
-                </router-link>
-            </li>
-            <li class="routes-card__wrapper" title="Перейти">
-                <router-link to="/locations">
-                    <img
-                        src="https://preview.redd.it/j6aefx4h98e31.png?auto=webp&s=6d8c306a1e2ae121f5cc6788e458824cb4f824e6" alt="Изображение ссылки"/>
-                    <h3>Локации</h3>
+            <li class="routes-card__wrapper" :class="route.path" title="Перейти" v-for="route in routes">
+                <router-link :to="{ name: route.path }">
+                    <img :src="route.img" alt="Изображение ссылки" />
+                    <h3>{{ route.title }}</h3>
                 </router-link>
             </li>
         </ul>
@@ -29,7 +16,11 @@
 export default {
     data() {
         return {
-
+            routes: [
+                { path: 'episodes', img: 'https://www.kp.ru/putevoditel/serialy/wp-content/uploads/2021/06/rik-i-morti-4-8.jpg', title: 'Эпизоды' },
+                { path: 'characters', img: 'https://proprikol.ru/wp-content/uploads/2020/12/kartinki-rik-i-morti-29.jpg', title: 'Герои' },
+                { path: 'locations', img: 'https://preview.redd.it/j6aefx4h98e31.png?auto=webp&s=6d8c306a1e2ae121f5cc6788e458824cb4f824e6', title: 'Локации' },
+            ]
         }
     }
 }
@@ -41,16 +32,31 @@ export default {
     padding: 20px;
 
     ul {
-        display: flex;
-        flex-direction: column;
-        row-gap: 20px;
+        display: grid;
+        grid-template-areas:
+            'episodes characters'
+            'locations locations';
+        gap: 20px;
+        grid-template-rows: 300px 600px;
+
+        .episodes {
+            grid-area: episodes;
+        }
+
+        .characters {
+            grid-area: characters;
+        }
+
+        .locations {
+            grid-area: locations;
+        }
+
         .routes-card__wrapper {
-            width: 800px;
-            height: 300px;
             border-radius: 12px;
             display: flex;
             overflow: hidden;
             position: relative;
+
             img {
                 width: 100%;
                 aspect-ratio: 16/9;
