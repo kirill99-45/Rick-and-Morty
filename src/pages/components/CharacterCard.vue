@@ -13,9 +13,9 @@
 
             </div>
             <h3 class="character-card__location">
-                    Location: 
-                    <span>{{ character.location?.name }}</span>
-                </h3>
+                Location:
+                <span>{{ character.location?.name }}</span>
+            </h3>
             <router-link :to="'/characters/' + character.id" class="character-card__link ">
                 Узнать больше
             </router-link>
@@ -95,6 +95,7 @@ export default defineComponent({
     &:hover {
         outline: solid #ff9800;
     }
+
     .img__wrapper {
         width: 50%;
         overflow: hidden;
@@ -105,7 +106,7 @@ export default defineComponent({
             object-fit: cover;
         }
     }
-    
+
     .character-card__info {
         padding: 10px;
         display: flex;
@@ -131,14 +132,15 @@ export default defineComponent({
 
             .circle {
                 position: absolute;
-                left: 0; top: 50%;
+                left: 0;
+                top: 50%;
                 transform: translateY(-50%);
                 width: 6px;
                 height: 6px;
                 border-radius: 50%;
                 background: white;
             }
-            
+
         }
 
         .character-card__location {
@@ -166,6 +168,12 @@ export default defineComponent({
                 color: #ff9800;
                 transform: scale(105%);
                 transition: 0.2s;
+            }
+
+            &:focus {
+                outline: none;
+                color: #ff9800;
+                border: solid #ff9800;
             }
         }
     }

@@ -1,15 +1,15 @@
 <template>
     <div class="characters__wrapper">
         <div class="characters__filters-wrapper">
-            <input placeholder="Поиск по имени персонажа..." />
+            <input placeholder="Поиск по имени персонажа..." v-model="searchQuery" />
+            <button @click="searchCHaracters" class="characters__button"><img src="@/assets/search.svg" /></button>
             <div :class="[isFilterActive ? 'select' : 'select-hidden']" @click="handleFilterClick">
                 <span>{{ filterState }}</span>
                 <img src="@/assets/arrow-down.svg" alt="Close icon" class="icon" />
                 <ul class="select__options">
                     <li v-for="option in options"
                         :class="[option === filterState ? 'select__option-hidden' : 'select__option']"
-                        @click='setFilterState($event)'
-                        >
+                        @click='setFilterState(option)'>
                         {{ option }}
                     </li>
                 </ul>
@@ -17,12 +17,16 @@
         </div>
         <hr />
         <ul class="characters__list">
-            <CharacterCard v-for="character in sortedCharacters" :url="character.url" />
+            <CharacterCard v-for="character in characters" :url="character.url" :key="character.id" />
         </ul>
         <ul class="pagination">
-            <li v-for="page in getPages">
+            <!-- <li v-for="page in totalPages" :key="page"
+                :class="[currentPage === page ? 'pagination__link-active' : 'pagination__link']"
+                @click="changePage(page)">
                 {{ page }}
-            </li>
+            </li> -->
+            <button class="pagination__button" v-if='prevPage !== null' @click="changePage(prevPage)">Назад</button>
+            <button class="pagination__button" v-if='nextPage !== null' @click="changePage(nextPage)">Вперед</button>
         </ul>
     </div>
 </template>
@@ -36,27 +40,53 @@ import { ICharacter } from './../components/CharacterCard.vue';
 export default defineComponent({
     data() {
         return {
-            characters: [],
+            characters: [] as ICharacter[],
             currentPage: 1,
             isFilterActive: false,
             filterState: 'All',
             options: ['All', 'Alive', 'Unknown', 'Dead'],
-            pages: 0,
+            totalPages: 0,
+            searchQuery: '',
+            prevPage: null as null | string,
+            nextPage: null as null | string,
         }
     },
     methods: {
         async fetchCharacters() {
-            const { data } = await axios.get('https://rickandmortyapi.com/api/character')
+            const { data } = await axios.get('https://rickandmortyapi.com/api/character', {
+                params: {
+                    page: this.currentPage,
+                }
+            })
             this.characters = data.results
-            this.pages = data.info.pages
+            if (data.info.next) this.nextPage = data.info.next
+            if (data.info.prev) this.prevPage = data.info.prev
         },
         handleFilterClick() {
             return this.isFilterActive = !this.isFilterActive
         },
-        setFilterState(event: MouseEvent) {
-            const target = event.currentTarget as HTMLElement
-            this.filterState = target.innerText
+        setFilterState(option: string) {
+            this.filterState = option
         },
+        scrollToTop() {
+            window.scrollTo(0, 0)
+        },
+        async changePage(url: string) {
+            console.log(this.nextPage)
+            
+            const { data } = await axios.get(url)
+            this.characters = data.results
+            console.log(data.info);
+            
+            this.nextPage = data.info.next
+            this.prevPage = data.info.prev
+            this.scrollToTop()
+        },
+        async searchCHaracters() {
+            const { data } = await axios.get(`https://rickandmortyapi.com/api/character/?name=${this.searchQuery}`)
+            this.characters = data.results
+            this.totalPages = data.info.pages
+        }
     },
     computed: {
         sortedCharacters(): ICharacter[] {
@@ -65,9 +95,19 @@ export default defineComponent({
             }
             return this.characters.filter((character: ICharacter) => character.status.toLowerCase() === this.filterState.toLowerCase())
         },
-        getPages(): number[] {
-            return new Array(this.pages).fill(null).map((_, index: number) => index + 1)
-        }
+    },
+    watch: {
+        async filterState(newValue) {
+            if (newValue !== 'All') {
+                const { data } = await axios.get(`https://rickandmortyapi.com/api/character/?name=rick&status=${this.filterState.toLowerCase()}`)
+                if (data.info.next) this.nextPage = data.info.next
+                if (data.info.prev) this.prevPage = data.info.prev
+                // this.totalPages = data.info.pages
+                this.characters = data.results
+            } else {
+                this.fetchCharacters()
+            }
+        },
     },
     components: {
         CharacterCard,
@@ -88,7 +128,6 @@ export default defineComponent({
 
     .characters__filters-wrapper {
         display: flex;
-        column-gap: 30px;
 
         input {
             width: 40%;
@@ -98,7 +137,26 @@ export default defineComponent({
             border: none;
         }
 
+        .characters__button {
+            width: 30px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 5px;
+            border: none;
+            cursor: pointer;
+
+            img {
+                width: 100%;
+                height: 100%;
+                padding: 5px;
+                object-fit: contain;
+            }
+        }
+
         .select {
+            margin-left: 20px;
             display: flex;
             position: relative;
             width: 150px;
@@ -166,9 +224,32 @@ export default defineComponent({
         justify-content: center;
         align-items: center;
 
-        li {
+        .pagination__link {
             border: solid 1px;
             padding: 2px;
+            cursor: pointer;
+        }
+
+        .pagination__link-active {
+            @extend .pagination__link;
+            border: $color-green solid 1px;
+        }
+
+        .pagination__button {
+            color: $color-white;
+            text-decoration: none;
+            border: solid $color-white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: 0.2s;
+            color: black;
+            cursor: pointer;
+
+            &:hover {
+                color: #ff9800;
+                transform: scale(105%);
+                transition: 0.2s;
+            }
         }
     }
 }
