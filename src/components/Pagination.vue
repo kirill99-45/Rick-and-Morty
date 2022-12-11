@@ -40,9 +40,9 @@ export default defineComponent({
 
     .pagination__button {
         background-color: $color-white;
-        padding: 20px;
-        margin-left: 10px;
-        font-size: 16px;
+        padding: 1.25em;
+        margin-left: 0.625em;
+        font-size: 1em;
         border: none;
         outline: none;
         opacity: 0.3;
@@ -66,7 +66,6 @@ export default defineComponent({
     .pagination__button-active {
         @extend .pagination__button;
         opacity: 1;
-
     }
 
 }

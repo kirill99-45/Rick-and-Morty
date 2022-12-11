@@ -1,7 +1,7 @@
 <template>
     <div class="episode__wrapper">
-        <SearchInput />
-        <ul class="episode__seasons-wrapper">
+        <SearchInput @search="searchEpisode" />
+        <ul class="episode__seasons-wrapper" v-if="!isLoading">
             <li v-for="season in sortedSeasons"
                 :class="[season.episodes.length > 0 ? 'episode__season-wrapper' : 'episode__season-hidden']">
                 <h2>Сезон {{ season.id }}</h2>
@@ -10,107 +10,75 @@
                 </ul>
             </li>
         </ul>
-        <Pagination :prevPage="prevPage" :nextPage="nextPage" @changePage="changePage" />
+        <Loader v-else />
+        <Pagination :prevPage="prevPage" :nextPage="nextPage" @changePage="updateEpisodes" />
     </div>
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { defineComponent } from 'vue';
-import { Pagination, SearchInput } from '@/components/index';
+
 import EpisodeCard from './EpisodeCard.vue';
+import { Pagination, SearchInput, Loader } from '@/components/index';
 
-export interface IEpisode {
-    id: number,
-    name: string,
-    air_date: string,
-    episode: string,
-    characters: string[],
-    url: string,
-    created: string,
-}
-
-interface ISeason {
-    id: number,
-    episodes: IEpisode[],
-    lastEpisode: number,
-}
+import { changePage, fetchData } from '@/helpers/api';
+import { createSeasons, getSeason } from './hepler';
+import { IEpisode, ISeason } from './types';
 
 export default defineComponent({
+    components: {
+        EpisodeCard,
+        Pagination,
+        SearchInput,
+        Loader,
+    },
     data() {
         return {
             episodes: [] as IEpisode[],
             searchQuery: '',
             prevPage: null,
             nextPage: null,
+            isLoading: false,
         }
     },
     methods: {
-        async fetchEpisodes() {
-            const { data } = await axios.get('https://rickandmortyapi.com/api/episode')
-            const { prev, next } = data.info
+        async fetchEpisodes(url = 'https://rickandmortyapi.com/api/episode') {
+            this.isLoading = true
+            await fetchData(url).then(({ data }) => {
+                const { results, info } = data
+                this.episodes = results
+                this.prevPage = info.prev
+                this.nextPage = info.next
+            }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
+        },
+        async searchEpisode(query: string) {
+            const URL = 'https://rickandmortyapi.com/api/episode/?name='
+            this.fetchEpisodes(URL + query)
+        },
+        async updateEpisodes(url: string | null) {
+            if (url === null) return
 
-            this.episodes = data.results
+            const { data, prev, next } = await changePage(url)
+            this.episodes = data
 
             this.prevPage = prev
             this.nextPage = next
-        },
-        async searchEpisode() {
-            const { data } = await axios.get(`https://rickandmortyapi.com/api/episode/?name=${this.searchQuery}`)
-
-            const { prev, next } = data.info
-
-            this.episodes = data.results
-
-            this.prevPage = prev
-            this.nextPage = next
-        },
-        getSeason(episode: number) {
-            if (episode < 12) return 1
-            if (episode > 11 && episode < 22) return 2
-            if (episode > 21 && episode < 32) return 3
-            if (episode > 31 && episode < 42) return 4
-            else return 5
-        },
-        async changePage(url: string | null) {
-            if (url !== null) {
-                const { data } = await axios.get(url)
-                const { pages, prev, next } = data.info
-
-                this.episodes = data.results
-
-                this.prevPage = prev
-                this.nextPage = next
-            }
         }
     },
     computed: {
-        searchedEpisodes(): IEpisode[] {
-            return this.episodes.filter((episode: IEpisode) => episode.name.toLowerCase().includes(this.searchQuery))
-        },
         sortedSeasons(): ISeason[] {
-            const seasons: ISeason[] = [
-                { id: 1, episodes: [], lastEpisode: 11 },
-                { id: 2, episodes: [], lastEpisode: 21 },
-                { id: 3, episodes: [], lastEpisode: 31 },
-                { id: 4, episodes: [], lastEpisode: 41 },
-                { id: 5, episodes: [], lastEpisode: 51 },
-            ]
+            const seasons = createSeasons()
 
             this.episodes.forEach((episode: IEpisode) => {
-                seasons[this.getSeason(episode.id) - 1].episodes.push(episode)
+                seasons[getSeason(episode.id)].episodes.push(episode)
             })
+
             return seasons
         },
     },
     mounted() {
         this.fetchEpisodes()
     },
-    components: {
-        EpisodeCard,
-        Pagination,
-        SearchInput,
-    }
 })
 
 </script>
@@ -119,11 +87,9 @@ export default defineComponent({
 .episode__wrapper {
     display: flex;
     flex-direction: column;
-    width: 80%;
-    padding: 20px;
-    overflow: hidden;
-    row-gap: 30px;
+    row-gap: 1.875em;
     min-height: 100vh;
+    width: 100%;
 
     .episode__filter {
         width: 100%;
@@ -131,7 +97,7 @@ export default defineComponent({
 
         .episode__input {
             width: 95%;
-            padding: 10px;
+            padding: 0.625em;
             border-radius: 6px;
             border: none;
             outline: none;
@@ -142,19 +108,19 @@ export default defineComponent({
         }
 
         .characters__button {
-            width: 30px;
+            width: 1.875em;
             border-radius: 6px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-left: 5px;
+            margin-left: 0.313em;
             border: none;
             cursor: pointer;
 
             img {
                 width: 100%;
                 height: 100%;
-                padding: 5px;
+                padding: 0.313em;
                 object-fit: contain;
             }
         }
@@ -164,13 +130,13 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
         width: 100%;
-        row-gap: 40px;
+        row-gap: 2.5em;
 
         .episode__season-wrapper {
             display: flex;
             flex-direction: column;
             align-items: start;
-            row-gap: 10px;
+            row-gap: 0.625em;
             position: relative;
 
             &:not(:last-child):after {
@@ -187,13 +153,34 @@ export default defineComponent({
                 width: 100%;
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
+                gap: 0.625em;
             }
         }
 
         .episode__season-hidden {
             display: none;
         }
+    }
+}
+
+/* MEDIA */
+
+@media (max-width: $breakpoint-mobile) {
+    .episode__wrapper {
+        font-size: 14px;
+        .episode__seasons-wrapper {
+
+            .episode__season-wrapper {
+                .episode__cards-wrapper {
+                    width: 100%;
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: 0.625em;
+                }
+            }
+
+        }
+
     }
 }
 </style>

@@ -21,17 +21,17 @@ export const routes: Array<RouteRecordRaw> = [
     component: EpisodePage,
   },
   {
-    path: '/characters',
+    path: '/characters/',
     name: 'characters',
     component: CharactersPage,
   },  
   {
     path: '/characters/:id',
-    name: 'character',
+    name: 'selected character',
     component: CharacterPage,
   },
   {
-    path: '/locations',
+    path: '/locations/',
     name: 'locations',
     component: LocationsPage,
   },
@@ -44,7 +44,7 @@ export const routes: Array<RouteRecordRaw> = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
 })
 
 export default router

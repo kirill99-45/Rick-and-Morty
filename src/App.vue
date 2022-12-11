@@ -38,6 +38,8 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: #202329;
+  min-height: 100vh;
 }
 
 .app__wrapper {
@@ -51,8 +53,7 @@ export default defineComponent({
   .app__header {
     position: fixed;
     top: 0; left: 0; right: 0;
-    border: solid grey 3px;
-    background-color: gray;
+    background-color: $color-white;
     height: 80px;
     display: flex;
     justify-content: center;
@@ -62,10 +63,9 @@ export default defineComponent({
 
   .app__main {
     width: 100%;
-    background-color: #202329;
-    min-height: 95vh;
     display: flex;
     justify-content: center;
+    padding: 20px;
   }
 }
 </style>

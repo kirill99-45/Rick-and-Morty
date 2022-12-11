@@ -28,31 +28,31 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .episode__card {
-    background-color: #3c3e44;
+    background-color: $color-gray;
     border-radius: 12px;
-    padding: 10px;
+    padding: 0.625em;
     overflow: hidden;
 
     a {
         text-decoration: none;
-        color: #f5f5f5;
-        font-size: 16px;
+        color: $color-white;
+        font-size: 1em;
         display: flex;
         flex-direction: column;
         align-items: start;
-        row-gap: 10px;
+        row-gap: 0.625em;
 
         h4 {
-            color: #9e9e9e;
+            color: $color-light-gray;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            row-gap: 5;
+            row-gap: 0.313em;
             width: 100%;
             justify-content: center;
 
             h3 {
-                color: #f5f5f5;
+                color: $color-white;
             }
             .card__title, .card__date {
                 @extend %tpl-text-ellipsis;
@@ -65,4 +65,5 @@ export default defineComponent({
         outline: solid $color-orange;
     }
 }
+
 </style>

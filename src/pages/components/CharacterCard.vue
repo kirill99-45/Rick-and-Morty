@@ -1,5 +1,5 @@
 <template>
-    <li class="episode__character-card">
+    <li class="episode__character-card" v-if="!isLoading">
         <div class="img__wrapper">
             <img :src="character.image" />
         </div>
@@ -10,50 +10,31 @@
                     <div class="circle" :style="{ background: circleColor }"></div>
                     {{ character.status }} - {{ character.species }}
                 </h3>
-
             </div>
             <h3 class="character-card__location">
                 Location:
                 <span>{{ character.location?.name }}</span>
             </h3>
-            <router-link :to="'/characters/' + character.id" class="character-card__link ">
+            <router-link :to="{ name: 'selected character', params: { id: getCharacterId }}" class="character-card__link ">
                 Узнать больше
             </router-link>
         </div>
     </li>
+    <Loader v-else/>
 </template>
 
 <script lang="ts">
-import axios from 'axios';
-import { defineComponent } from 'vue';
+import { fetchData } from '@/helpers/api';
 
-export interface ICharacter {
-    created: string,
-    name: string,
-    episode: string[],
-    gender: string,
-    id: number,
-    image: string,
-    location: {
-        name: string,
-        url: string,
-    },
-    origin: {
-        name: string,
-        url: string,
-    },
-    species: string,
-    status: string,
-    type: string,
-    url: string,
-}
+import { defineComponent } from 'vue';
+import { ICharacter } from './types';
+
+import { Loader } from '@/components/index';
+
 
 export default defineComponent({
-    data() {
-        return {
-            character: {} as ICharacter,
-            circleColor: '',
-        }
+    components: {
+        Loader,
     },
     props: {
         url: {
@@ -61,26 +42,42 @@ export default defineComponent({
             required: true,
         }
     },
+    data() {
+        return {
+            character: {} as ICharacter,
+            circleColor: '',
+            isLoading: false,
+        }
+    },
     methods: {
-        async getAll() {
-            const { data } = await axios.get(this.url)
-            this.character = data
-            this.circleColor = this.getCircleColor(data.status)
+        async getChatacter() {
+            this.isLoading = true
+            await fetchData(this.url).then(({ data }) => {
+                this.character = data
+                this.getCircleColor()
+            }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => {
+                this.isLoading = false
+            })
         },
-        getCircleColor(status: string) {
-            const GREEN = '#55cc44'
-            const RED = '#d63d2e'
-            const GRAY = '#9e9e9e'
+        getCircleColor() {
+            const colors = { green : '#55cc44', red : '#d63d2e', gray : '#9e9e9e' }
 
-            status = status.toLowerCase()
-            if (status === 'alive') return GREEN
-            else if (status === 'dead') return RED
-            else return GRAY
+            const status = this.character.status.toLowerCase()
+
+            if (status === 'alive') this.circleColor = colors.green
+            else if (status === 'dead') this.circleColor = colors.red
+            else this.circleColor = colors.gray
+        },
+    },
+    computed: {
+        getCharacterId(): string {
+            const array = this.url.split('/')
+            return array[array.length - 1]
         },
     },
     mounted() {
-        this.getAll()
-    }
+        this.getChatacter()
+    },
 })
 
 </script>
@@ -88,12 +85,12 @@ export default defineComponent({
 <style scoped lang="scss">
 .episode__character-card {
     display: flex;
-    background-color: #3c3e44;
+    background-color: $color-gray;
     border-radius: 12px;
     overflow: hidden;
 
     &:hover {
-        outline: solid #ff9800;
+        outline: solid $color-orange;
     }
 
     .img__wrapper {
@@ -114,20 +111,20 @@ export default defineComponent({
         align-items: start;
         justify-content: space-between;
         width: 50%;
-        color: #ff9800;
-        row-gap: 20px;
+        color: $color-orange;
+        row-gap: 1.25em;
 
         .character-card__name {
             text-align: left;
-            font-size: 24px;
+            font-size: 1.5em;
             font-weight: 800;
         }
 
         .character-card__status {
             display: flex;
             position: relative;
-            padding-left: 10px;
-            font-size: 16px;
+            padding-left: 0.625em;
+            font-size: 1em;
             color: $color-white;
 
             .circle {
@@ -138,21 +135,20 @@ export default defineComponent({
                 width: 6px;
                 height: 6px;
                 border-radius: 50%;
-                background: white;
+                background: $color-white;
             }
 
         }
 
         .character-card__location {
             text-align: left;
-            color: #9e9e9e;
-            font-size: 14px;
+            color: $color-light-gray;
+            font-size: 0.875em;
 
             span {
                 color: $color-white;
-                font-size: 16px;
+                font-size: 1em;
                 font-weight: normal;
-
             }
         }
 
@@ -160,20 +156,20 @@ export default defineComponent({
             color: $color-white;
             text-decoration: none;
             border: solid $color-white;
-            padding: 10px 20px;
+            padding: 0.625em 1.25em;
             border-radius: 6px;
             transition: 0.2s;
 
             &:hover {
-                color: #ff9800;
+                color: $color-orange;
                 transform: scale(105%);
                 transition: 0.2s;
             }
 
             &:focus {
                 outline: none;
-                color: #ff9800;
-                border: solid #ff9800;
+                color: $color-orange;
+                border: solid $color-orange;
             }
         }
     }

@@ -1,5 +1,5 @@
 <template>
-    <div class="location__wrapper">
+    <div class="location__wrapper" v-if="!isLoading">
         <div class="location__info">
             <h1>Планета: <span>{{ location.name }}</span></h1>
             <h2>Измерение: <span>{{ location.dimension }}</span></h2>
@@ -13,58 +13,69 @@
             <h3 v-else class="location__characters-emty">Видимо тут пусто...</h3>
         </div>
     </div>
+    <Loader v-else />
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { defineComponent } from 'vue';
-import { ILocation } from './Locationspage.vue';
+
+import { ILocation } from './types';
+import { fetchData } from '@/helpers/api';
+
 import CharacterCard from './../components/CharacterCard.vue'
+import { Loader } from '@/components/index';
+
 
 export default defineComponent({
+    components: {
+        CharacterCard,
+        Loader,
+    },
     data() {
         return {
             location: {} as ILocation,
+            isLoading: false,
         }
     },
     methods: {
         async fetchLocation() {
-            const { id } = this.$route.params
-            const { data } = await axios.get(`https://rickandmortyapi.com/api/location/${id}`)
-            this.location = data
+            this.isLoading = true
+
+            const URL = 'https://rickandmortyapi.com/api/location/'
+
+            await fetchData(URL + this.$route.params.id).then(({ data }) => {
+                this.location = data
+            }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
         }
     },
     mounted() {
         this.fetchLocation()
     },
-    components: {
-        CharacterCard,
-    }
 })
 
 </script>
 
 <style scoped lang="scss">
 .location__wrapper {
-    width: 80%;
-    padding: 20px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    row-gap: 20px;
+    row-gap: 1.25em;
 
     .location__info {
         display: flex;
         flex-direction: column;
         align-items: start;
-        row-gap: 5px;
+        row-gap: 0.313em;
 
-        h1, h2 {
-            color: #9e9e9e;
-            font-size: 18px;
+        h1,
+        h2 {
+            color: $color-light-gray;
+            font-size: 1.125em;
 
             span {
                 color: $color-white;
-                font-size: 20px;
+                font-size: 1.25em;
             }
         }
     }
@@ -72,11 +83,11 @@ export default defineComponent({
     .location__characters-wrapper {
         display: flex;
         flex-direction: column;
-        row-gap: 20px;
+        row-gap: 1.25em;
 
         h3 {
             text-align: left;
-            font-size: 26px;
+            font-size: 1.625em;
             color: $color-white;
             font-weight: 800;
         }
@@ -85,7 +96,7 @@ export default defineComponent({
             width: 100%;
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 1.25em;
         }
 
         .location__characters-emty {
@@ -93,9 +104,29 @@ export default defineComponent({
         }
     }
 }
-</style>
 
-<!-- Локации
-- Переход на страницу-карточку локации, где
-отобразить основную информацию и всех жителей, с
-навигацией по ним. -->
+/* MEDIA */
+
+@media (max-width: $breakpoint-tablet) {
+    .location__wrapper {
+        .location__characters-wrapper {
+
+            ul {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+}
+
+@media (max-width: $breakpoint-mobile) {
+    .location__wrapper {    
+        font-size: 14px;
+    }
+}
+
+@media (max-width: $breakpoint-mobile-mini) {
+    .location__wrapper {    
+        font-size: 12px;
+    }
+}
+</style>

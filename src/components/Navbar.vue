@@ -1,9 +1,9 @@
 <template>
     <nav>
-        <router-link :to="{ name: 'home' }">Главная страница</router-link>
-        <router-link :to="{ name: 'episodes' }"> Эпизоды</router-link>
-        <router-link :to="{ name: 'characters' }"> Герои</router-link>
-        <router-link :to="{ name: 'locations' }"> Локации</router-link>
+        <router-link :to="{ name: 'home' }">Главная</router-link>
+        <router-link :to="{ name: 'episodes' }" exact-path> Эпизоды</router-link>
+        <router-link :to="{ name: 'characters' }" exact-path> Герои</router-link>
+        <router-link :to="{ name: 'locations' }" exact-path> Локации</router-link>
     </nav>
 </template>
 
@@ -27,16 +27,24 @@ export default {
 }
 
 nav {
-    padding: 30px;
+    padding: 1.875em;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    column-gap: 30px;
+    column-gap: 1.875em;
+
+    .router-link-exact-path-active {
+        border: solid red;
+    }
+
+    .active {
+        border: solid red;
+    }
 
     a {
         font-weight: bold;
-        color: #2c3e50;
+        color: $color-black;
         position: relative;
         text-decoration: none;
 
@@ -47,10 +55,10 @@ nav {
             bottom: 0;
             right: -15px;
             margin-left: 15px;
-            color: #2c3e50;
+            color: $color-black;
         }
 
-        &.router-link-exact-active {
+        &.router-link-active {
             color: $color-green;
 
             &:before {
@@ -72,4 +80,19 @@ nav {
         }
     }
 }
+
+/* MEDIA */ 
+
+@media (max-width: $breakpoint-tablet) {
+    nav {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: $breakpoint-mobile-mini) {
+    nav {
+        font-size: 12px;
+    }
+}
+
 </style>

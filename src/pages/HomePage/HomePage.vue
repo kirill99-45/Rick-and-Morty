@@ -2,7 +2,7 @@
     <div class="home__wrapper">
         <ul>
             <li class="routes-card__wrapper" :class="route.path" title="Перейти" v-for="route in routes">
-                <router-link :to="{ name: route.path }">
+                <router-link :to="{ name: route.path }" class="img__wrapper">
                     <img :src="route.img" alt="Изображение ссылки" />
                     <h3>{{ route.title }}</h3>
                 </router-link>
@@ -24,20 +24,20 @@ export default {
         }
     }
 }
-
 </script>
 
 <style scoped lang="scss">
 .home__wrapper {
-    padding: 20px;
+    padding: 1.25em;
+    width: 100%;
 
     ul {
         display: grid;
         grid-template-areas:
             'episodes characters'
             'locations locations';
-        gap: 20px;
-        grid-template-rows: 300px 600px;
+        gap: 1.25em;
+        grid-template-rows: 30vh 50vh;
 
         .episodes {
             grid-area: episodes;
@@ -56,24 +56,52 @@ export default {
             display: flex;
             overflow: hidden;
             position: relative;
+            width: 100%;
 
-            img {
+            .img__wrapper {
                 width: 100%;
-                aspect-ratio: 16/9;
-                object-fit: cover;
+
+                img {
+                    height: 100%;
+                    width: 100%;
+                    object-fit: cover;
+                }
             }
 
             h3 {
                 position: absolute;
-                top: 10px;
-                left: 10px;
-                padding: 10px 40px;
+                top: 0.625em;
+                left: 0.625em;
+                padding: 0.625em 2.5em;
                 border-radius: 12px;
-                background-color: #202329d1;
+                background-color: $color-black;
                 color: $color-green;
             }
         }
     }
 
+}
+
+/* MEDIA */
+
+@media (max-width: $breakpoint-tablet) {
+    .home__wrapper {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: $breakpoint-mobile) {
+    .home__wrapper {
+        font-size: 12px;
+
+        ul {
+        grid-template-areas:
+            'episodes'
+            'characters'
+            'locations';
+        gap: 1.25em;
+        grid-template-rows: 30vh 30vh 30vh;
+        }
+    }
 }
 </style>

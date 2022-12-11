@@ -44,7 +44,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .select {
-    margin-left: 20px;
     display: flex;
     position: relative;
     width: 150px;
@@ -59,9 +58,9 @@ export default defineComponent({
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        right: 10px;
-        width: 18px;
-        height: 18px;
+        right: 0.625em;
+        width: 1.125em;
+        height: 1.125em;
     }
 
     .select__options {

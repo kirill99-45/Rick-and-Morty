@@ -6,7 +6,7 @@ import EpisodePage from './EpisodesPage/EpisodePage.vue';
 import CharactersPage from './CharactersPage/CharactersPage.vue';
 import CharacterPage from './CharactersPage/CharacterPage.vue';
 
-import LocationsPage from './LocationsPage/Locationspage.vue';
+import LocationsPage from './LocationsPage/LocationsPage.vue';
 import LocationPage from './LocationsPage/LocationPage.vue';
 
 export {

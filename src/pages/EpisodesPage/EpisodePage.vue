@@ -1,5 +1,5 @@
 <template>
-    <div class="episode__wrapper">
+    <div class="episode__wrapper" v-if="!isLoading">
         <header>
             <h2>Эпизод: {{ episode.name }}</h2>
             <h2>Серия №{{ episode.id }}</h2>
@@ -11,29 +11,37 @@
             </ul>
         </main>
     </div>
+    <Loader v-else />
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { defineComponent } from 'vue';
-import { IEpisode } from './EpisodesPage.vue';
-import CharacterCard from '../components/CharacterCard.vue';
 
+import { IEpisode } from './types';
+import { fetchData } from '@/helpers/api';
+
+import CharacterCard from '../components/CharacterCard.vue';
+import { Loader } from '@/components/index'
 
 export default defineComponent({
+    components: {
+        CharacterCard,
+        Loader,
+    },
     data() {
         return {
             episode: {} as IEpisode,
+            isLoading: false,
         }
     },
     methods: {
         async fetchEpisode() {
-            const { data } = await axios.get(`https://rickandmortyapi.com/api/episode/${this.$route.params.id}`)
-            this.episode = data
+            this.isLoading = true
+            const URL = 'https://rickandmortyapi.com/api/episode/'
+            await fetchData(URL + this.$route.params.id).then(({ data }) => {
+                this.episode = data
+            }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
         },
-    },
-    components: {
-        CharacterCard,
     },
     mounted() {
         this.fetchEpisode()
@@ -44,7 +52,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .episode__wrapper {
-    padding: 20px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: start;
@@ -61,11 +69,11 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
         align-items: center;
-        row-gap: 10px;
+        row-gap: 0.625em;
 
         h2 {
             font-weight: 800;
-            font-size: 30px;
+            font-size: 1.875em;
             color: $color-white;
             align-self: start;
         }
@@ -73,9 +81,44 @@ export default defineComponent({
         .episode__characters-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
+            gap: 1.875em;
             width: 100%;
         }
+    }
+}
+
+/* MEDIA */
+
+@media (max-width: $breakpoint-tablet) {
+    .episode__wrapper {
+        .episode__characters-wrapper {
+
+            .episode__characters-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    }
+}
+
+@media (max-width: $breakpoint-mobile) {
+    .episode__wrapper { 
+        font-size: 14px;
+
+        header {
+            font-size: 12px;
+        }
+    }
+}
+
+@media (max-width: $breakpoint-mobile-mini) {
+    .episode__wrapper { 
+        font-size: 12px;
+
+        header {
+            font-size: 10px;
+        }
+
+
     }
 }
 </style>
