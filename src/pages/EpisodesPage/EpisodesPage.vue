@@ -10,16 +10,12 @@
                 </ul>
             </li>
         </ul>
-        <!-- <nav class="episode__pagination">
-            <ul class="paganation__wrapper">
-            <router-link :to="'/episodes/' + page" v-for="page in getPages" :key="page"
-                :class="[page === getCurrentPage ? 'pagination__button-active' : 'pagination__button']">
-                <li>
-                    {{ page }}
-                </li>
-            </router-link>
-            </ul>
-        </nav> -->
+        <nav class="episode__pagination">
+            <button class="pagination__button" v-if="prevPage !== null"
+                @click="changePage(this.prevPage)">Назад</button>
+            <button class="pagination__button" v-if="nextPage !== null"
+                @click="changePage(this.nextPage)">Вперед</button>
+        </nav>
     </div>
 </template>
 
@@ -48,9 +44,10 @@ export default defineComponent({
     data() {
         return {
             episodes: [] as IEpisode[],
-            pages: 0,
+            totalPages: null as null | number,
             searchQuery: '',
-            totalCount: 0,
+            prevPage: null,
+            nextPage: null,
             seasons: [
                 { id: 1, episodes: [], lastEpisode: 11 },
                 { id: 2, episodes: [], lastEpisode: 21 },
@@ -61,42 +58,49 @@ export default defineComponent({
         }
     },
     methods: {
-        async fetchEpisodes(page: string | number) {
-            const { data } = await axios.get(`https://rickandmortyapi.com/api/episode?&page=${page}`)
+        async fetchEpisodes() {
+            const { data } = await axios.get('https://rickandmortyapi.com/api/episode')
+            const { pages, prev, next } = data.info
+
             this.episodes = data.results
-            this.pages = data.info.pages
+
+            this.totalPages = pages
+            this.prevPage = prev
+            this.nextPage = next
         },
+        getSeason(episode: number) {
+            if (episode < 12) return 1
+            if (episode > 11 && episode < 22) return 2
+            if (episode > 22 && episode < 32) return 3
+            if (episode > 32 && episode < 42) return 4
+            else return 5
+        },
+        async changePage(url: string | null) {
+            if (url !== null) {
+                const { data } = await axios.get(url)
+                const { pages, prev, next } = data.info
+
+                this.episodes = data.results
+
+                this.totalPages = pages
+                this.prevPage = prev
+                this.nextPage = next
+            }
+        }
     },
     computed: {
         searchedEpisodes(): IEpisode[] {
             return this.episodes.filter((episode: IEpisode) => episode.name.toLowerCase().includes(this.searchQuery))
         },
         sortedSeasons(): ISeason[] {
-            let currentEpisode = 0 // Так как нам нужно пройти по массиву всех сезонов и мы будем обращаться по индексу тукещего сезона, то начинаем с нуля       
-            return this.seasons.map((season: ISeason, index: number) => {
-                for (let i = currentEpisode; i < season.lastEpisode; i += 1) {
-                    if (this.episodes[currentEpisode] !== undefined) {
-                        season.episodes.push(this.episodes[currentEpisode]) // Здесь мы добавляем каждому эпизоду указание на сезон, к которому он относится
-                        currentEpisode += 1
-                    }
-                }
-                return season
+            this.episodes.forEach((episode: IEpisode) => {
+                this.seasons[this.getSeason(episode.id) - 1].episodes.push(episode)
             })
+            return this.seasons
         },
-        getPages(): string[] {
-            return new Array(this.pages).fill(null).map((_, pageNumber) => {
-                const page = pageNumber + 1
-                return page.toString()
-            })
-        },
-        // getCurrentPage() {
-        //     console.log(this.$route.params);
-            
-        //     return this.$route.params.page
-        // },
     },
     mounted() {
-        this.fetchEpisodes(1)
+        this.fetchEpisodes()
     },
     components: {
         EpisodeCard,
@@ -166,37 +170,33 @@ export default defineComponent({
     .episode__pagination {
         width: 100%;
         display: block;
-        .paganation__wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            .pagination__button {
-                background-color: $color-white;
-                padding: 20px;
-                margin-left: 10px;
-                font-size: 20px;
-                border: none;
-                outline: none;
-                opacity: 0.3;
-                transition: 0.2s;
-                cursor: pointer;
-                text-decoration: none;
-                font-weight: 800;
 
-                &:hover {
-                    opacity: 1;
-                    transition: 0.2s;
-                }
+        .pagination__button {
+            background-color: $color-white;
+            padding: 20px;
+            margin-left: 10px;
+            font-size: 20px;
+            border: none;
+            outline: none;
+            opacity: 0.3;
+            transition: 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 800;
 
-                &:active {
-                    outline: none;
-                }
-            }
-
-            .pagination__button-active {
-                @extend .pagination__button;
+            &:hover {
                 opacity: 1;
+                transition: 0.2s;
             }
+
+            &:active {
+                outline: none;
+            }
+        }
+
+        .pagination__button-active {
+            @extend .pagination__button;
+            opacity: 1;
 
         }
 

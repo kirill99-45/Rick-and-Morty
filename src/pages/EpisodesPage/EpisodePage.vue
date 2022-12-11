@@ -1,7 +1,7 @@
 <template>
     <div class="episode__wrapper">
         <header>
-            <h2>Название: {{ episode.name }}</h2>
+            <h2>Эпизод: {{ episode.name }}</h2>
             <h2>Серия №{{ episode.id }}</h2>
         </header>
         <main class="episode__characters-wrapper">
