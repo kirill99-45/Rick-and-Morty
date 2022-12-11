@@ -20,7 +20,7 @@ import { defineComponent } from 'vue';
 import { IEpisode } from './types';
 import { fetchData } from '@/helpers/api';
 
-import CharacterCard from '../components/CharacterCard.vue';
+import CharacterCard from '../../components/CharacterCard.vue';
 import { Loader } from '@/components/index'
 
 export default defineComponent({

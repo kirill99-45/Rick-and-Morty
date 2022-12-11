@@ -10,9 +10,9 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 
 import Navbar from '@/components/Navbar.vue';
-import { defineComponent } from 'vue';
 
 export default defineComponent({
   components: {
@@ -23,7 +23,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" >
-
 * {
   padding: 0;
   margin: 0;
@@ -37,8 +36,8 @@ export default defineComponent({
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  background-color: #202329;
+  color: $color-light-black;
+  background-color: $color-black;
   min-height: 100vh;
 }
 
@@ -52,7 +51,9 @@ export default defineComponent({
 
   .app__header {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     background-color: $color-white;
     height: 80px;
     display: flex;
@@ -65,7 +66,7 @@ export default defineComponent({
     width: 100%;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 1.25em;
   }
 }
 </style>

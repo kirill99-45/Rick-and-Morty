@@ -1,16 +1,25 @@
 <template>
     <nav>
-        <router-link :to="{ name: 'home' }">Главная</router-link>
-        <router-link :to="{ name: 'episodes' }" exact-path> Эпизоды</router-link>
-        <router-link :to="{ name: 'characters' }" exact-path> Герои</router-link>
-        <router-link :to="{ name: 'locations' }" exact-path> Локации</router-link>
+        <router-link v-for="route in routes" :to="{ name: route.name }">{{ route.title }}</router-link>
     </nav>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
-}
+
+export default defineComponent({
+    data() {
+        return {
+            routes : [
+                { name: 'home', title: 'Главная' },
+                { name: 'episodes', title: 'Эпизоды' },
+                { name: 'characters', title: 'Герои' },
+                { name: 'locations', title: 'Локации' },
+            ]
+        }
+    }
+})
 
 </script>
 
@@ -33,14 +42,6 @@ nav {
     align-items: center;
     flex-direction: row;
     column-gap: 1.875em;
-
-    .router-link-exact-path-active {
-        border: solid red;
-    }
-
-    .active {
-        border: solid red;
-    }
 
     a {
         font-weight: bold;

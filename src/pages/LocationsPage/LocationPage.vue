@@ -22,7 +22,7 @@ import { defineComponent } from 'vue';
 import { ILocation } from './types';
 import { fetchData } from '@/helpers/api';
 
-import CharacterCard from './../components/CharacterCard.vue'
+import CharacterCard from '../../components/CharacterCard.vue'
 import { Loader } from '@/components/index';
 
 

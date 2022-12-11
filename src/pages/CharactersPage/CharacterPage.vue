@@ -26,7 +26,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { ICharacter } from '@/pages/components/types';
+import { ICharacter } from '@/pages/CharactersPage/types';
 import { fetchData } from '@/helpers/api';
 
 import { Loader } from '@/components/index'

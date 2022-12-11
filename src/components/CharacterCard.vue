@@ -27,7 +27,7 @@
 import { fetchData } from '@/helpers/api';
 
 import { defineComponent } from 'vue';
-import { ICharacter } from './types';
+import { ICharacter } from '@/pages/CharactersPage/types';
 
 import { Loader } from '@/components/index';
 
@@ -119,7 +119,6 @@ export default defineComponent({
             font-size: 1.5em;
             font-weight: 800;
         }
-
         .character-card__status {
             display: flex;
             position: relative;

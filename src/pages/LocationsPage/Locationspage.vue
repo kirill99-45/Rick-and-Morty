@@ -16,16 +16,17 @@
         </ul>
         <Loader v-else />
         <hr />
-        <Pagination :prevPage="prevPage" :nextPage="nextPage" @changePage="updateLocations" />
+        <Pagination :prevPage="prevPage" :nextPage="nextPage" @updatePage="changePage" />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { Pagination, SearchInput, Loader } from '@/components/index';
+import { Pagination, Loader } from '@/components/index';
+import { SearchInput } from '@/components/UI/index';
 
-import { changePage, fetchData } from '@/helpers/api';
+import { fetchPage, fetchData } from '@/helpers/api';
 import { ILocation } from './types';
 
 export default defineComponent({
@@ -57,10 +58,10 @@ export default defineComponent({
             const URL = 'https://rickandmortyapi.com/api/location/?name='
             this.fetchLocations(URL + query)
         },
-        async updateLocations(url: string | null) {
+        async changePage(url: string | null) {
             if (url === null) return
 
-            const { data, prev, next } = await changePage(url)
+            const { data, prev, next } = await fetchPage(url)
             this.locations = data
 
             this.prevPage = prev

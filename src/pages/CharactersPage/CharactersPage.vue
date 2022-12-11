@@ -9,19 +9,20 @@
             <CharacterCard v-for="character in characters" :url="character.url" :key="character.id" />
         </ul>
         <Loader v-else />
-        <Pagination :prevPage="prevPage" :nextPage="nextPage" @changePage="updateCharacters" />
+        <Pagination :prevPage="prevPage" :nextPage="nextPage" @updatePage="changePage" />
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import CharacterCard from './../components/CharacterCard.vue';
-import { ICharacter } from '../components/types';
+import { CharacterCard } from '@/components/index';
+import { ICharacter } from './types';
 
-import { Pagination, SearchInput, CustomSelect, Loader } from '@/components/index';
+import { SearchInput, CustomSelect } from '@/components/UI/index';
+import { Pagination, Loader } from '@/components/index';
 
-import { changePage, fetchData } from '@/helpers/api';
+import { fetchPage, fetchData } from '@/helpers/api';
 
 export default defineComponent({
     components: {
@@ -59,9 +60,9 @@ export default defineComponent({
         setFilterState(option: string) {
             this.filterState = option
         },
-        async updateCharacters(url: string | null) {
+        async changePage(url: string | null) {
             if (url === null) return
-            const { data, prev, next } = await changePage(url)
+            const { data, prev, next } = await fetchPage(url)            
 
             this.characters = data
 

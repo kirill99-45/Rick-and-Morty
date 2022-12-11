@@ -1,7 +1,7 @@
 <template>
     <nav class="pagination">
-        <button class="pagination__button" v-if="prevPage !== null" @click="changePage(prevPage)">Назад</button>
-        <button class="pagination__button" v-if="nextPage !== null" @click="changePage(nextPage)">Вперед</button>
+        <button class="pagination__button" v-if="prevPage !== null" @click="updatePage(prevPage)">Назад</button>
+        <button class="pagination__button" v-if="nextPage !== null" @click="updatePage(nextPage)">Вперед</button>
     </nav>
 </template>
 
@@ -19,9 +19,9 @@ export default defineComponent({
         },
     },
     methods: {
-        changePage(url: string | null) {
+        updatePage(url: string | null) {
             if (url !== null) {
-                this.$emit('changePage', url)
+                this.$emit('updatePage', url)
                 this.scrollToTop()
             }
         },

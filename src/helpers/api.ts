@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const changePage = async (url: string) => {
+export const fetchPage = async (url: string) => {
     const { data } = await axios.get(url)
     const { prev, next } = data.info
 

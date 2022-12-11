@@ -11,7 +11,7 @@
             </li>
         </ul>
         <Loader v-else />
-        <Pagination :prevPage="prevPage" :nextPage="nextPage" @changePage="updateEpisodes" />
+        <Pagination :prevPage="prevPage" :nextPage="nextPage" @updatePage="changePage" />
     </div>
 </template>
 
@@ -19,10 +19,11 @@
 import { defineComponent } from 'vue';
 
 import EpisodeCard from './EpisodeCard.vue';
-import { Pagination, SearchInput, Loader } from '@/components/index';
+import { SearchInput } from '@/components/UI/index';
+import { Pagination, Loader } from '@/components/index';
 
-import { changePage, fetchData } from '@/helpers/api';
-import { createSeasons, getSeason } from './hepler';
+import { fetchPage, fetchData } from '@/helpers/api';
+import { createSeasons, getSeason } from './helpers';
 import { IEpisode, ISeason } from './types';
 
 export default defineComponent({
@@ -55,10 +56,10 @@ export default defineComponent({
             const URL = 'https://rickandmortyapi.com/api/episode/?name='
             this.fetchEpisodes(URL + query)
         },
-        async updateEpisodes(url: string | null) {
+        async changePage(url: string | null) {
             if (url === null) return
 
-            const { data, prev, next } = await changePage(url)
+            const { data, prev, next } = await fetchPage(url)
             this.episodes = data
 
             this.prevPage = prev
