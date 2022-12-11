@@ -38,6 +38,7 @@ export default {
 
 <style scoped lang="scss">
 .home__wrapper {
+    padding: 20px;
 
     ul {
         display: flex;
