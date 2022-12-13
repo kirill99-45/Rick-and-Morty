@@ -16,7 +16,7 @@
         </ul>
         <Loader v-else />
         <hr />
-        <Pagination :prevPage="prevPage" :nextPage="nextPage" @updatePage="changePage" />
+        <Pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage"/>
     </div>
 </template>
 
@@ -26,7 +26,7 @@ import { defineComponent } from 'vue';
 import { Pagination, Loader } from '@/components/index';
 import { SearchInput } from '@/components/UI/index';
 
-import { fetchPage, fetchData } from '@/helpers/api';
+import { fetchData } from '@/helpers/api';
 import { ILocation } from './types';
 
 export default defineComponent({
@@ -42,30 +42,32 @@ export default defineComponent({
             prevPage: null as null | string,
             nextPage: null as null | string,
             isLoading: false,
+            url: '',
+            currentPage: 1,
+            totalPages: 0,
         }
     },
     methods: {
         async fetchLocations(url = 'https://rickandmortyapi.com/api/location') {
             this.isLoading = true
-            await fetchData(url).then(({ data }) => {
-                const { results, info } = data
-                this.locations = results
-                this.prevPage = info.prev
-                this.nextPage = info.next
-            }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
+            await fetchData(url)
+                .then(({ data }) => {
+                    const { results, info } = data
+                    this.locations = results
+                    this.url = info.prev || info.next
+                    this.totalPages = info.pages
+                    
+                })
+                .catch(error => alert(`Что-то пошло не так: ${error}`))
+                .finally(() => this.isLoading = false)
         },
         async searchLocation(query: string) {
             const URL = 'https://rickandmortyapi.com/api/location/?name='
             this.fetchLocations(URL + query)
         },
-        async changePage(url: string | null) {
-            if (url === null) return
-
-            const { data, prev, next } = await fetchPage(url)
-            this.locations = data
-
-            this.prevPage = prev
-            this.nextPage = next
+        async changePage({ url, page }:{ url: string, page: number}) {
+            this.fetchLocations(url)
+            this.currentPage = page
         }
     },
     mounted() {
@@ -82,6 +84,7 @@ export default defineComponent({
     row-gap: 1.25em;
     width: 100%;
     justify-content: space-between;
+    min-height: 100vh;
 
     .locations__list {
         display: grid;

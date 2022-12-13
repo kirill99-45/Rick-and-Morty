@@ -9,7 +9,7 @@
             <CharacterCard v-for="character in characters" :url="character.url" :key="character.id" />
         </ul>
         <Loader v-else />
-        <Pagination :prevPage="prevPage" :nextPage="nextPage" @updatePage="changePage" />
+        <Pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
     </div>
 </template>
 
@@ -22,7 +22,7 @@ import { ICharacter } from './types';
 import { SearchInput, CustomSelect } from '@/components/UI/index';
 import { Pagination, Loader } from '@/components/index';
 
-import { fetchPage, fetchData } from '@/helpers/api';
+import { fetchData } from '@/helpers/api';
 
 export default defineComponent({
     components: {
@@ -39,20 +39,24 @@ export default defineComponent({
             filterState: 'All',
             options: ['All', 'Alive', 'Unknown', 'Dead'],
             searchQuery: '',
-            prevPage: null as null | string,
-            nextPage: null as null | string,
             isLoading: false,
+            url: '',
+            currentPage: 1,
+            totalPages: 0,
         }
     },
     methods: {
         async fetchCharacters(url = 'https://rickandmortyapi.com/api/character') {
             this.isLoading = true
-            await fetchData(url).then(({ data }) => {
-                const { results, info } = data
-                this.characters = results
-                this.prevPage = info.prev
-                this.nextPage = info.next
-            }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
+            await fetchData(url)
+                .then(({ data }) => {
+                    const { results, info } = data
+                    this.characters = results
+                    this.totalPages = info.pages
+                    this.url = info.next || info.prev
+                })
+                .catch(error => alert(`Что-то пошло не так: ${error}`))
+                .finally(() => this.isLoading = false)
         },
         handleFilterClick() {
             return this.isFilterActive = !this.isFilterActive
@@ -60,14 +64,9 @@ export default defineComponent({
         setFilterState(option: string) {
             this.filterState = option
         },
-        async changePage(url: string | null) {
-            if (url === null) return
-            const { data, prev, next } = await fetchPage(url)            
-
-            this.characters = data
-
-            this.nextPage = next
-            this.prevPage = prev
+        async changePage({ url, page }: { url: string, page: number }) {
+            this.fetchCharacters(url)
+            this.currentPage = page
         },
         async searchCharacters(qeury: string) {
             const URL = 'https://rickandmortyapi.com/api/character/?name='

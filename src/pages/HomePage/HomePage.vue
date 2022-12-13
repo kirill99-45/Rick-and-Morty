@@ -12,8 +12,10 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue';
 
-export default {
+
+export default defineComponent({
     data() {
         return {
             routes: [
@@ -22,8 +24,8 @@ export default {
                 { path: 'locations', img: 'https://preview.redd.it/j6aefx4h98e31.png?auto=webp&s=6d8c306a1e2ae121f5cc6788e458824cb4f824e6', title: 'Локации' },
             ]
         }
-    }
-}
+    },
+})
 </script>
 
 <style scoped lang="scss">
@@ -95,12 +97,12 @@ export default {
         font-size: 12px;
 
         ul {
-        grid-template-areas:
-            'episodes'
-            'characters'
-            'locations';
-        gap: 1.25em;
-        grid-template-rows: 30vh 30vh 30vh;
+            grid-template-areas:
+                'episodes'
+                'characters'
+                'locations';
+            gap: 1.25em;
+            grid-template-rows: 30vh 30vh 30vh;
         }
     }
 }

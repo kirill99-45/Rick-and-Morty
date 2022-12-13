@@ -1,6 +1,7 @@
 <template>
     <nav>
-        <router-link v-for="route in routes" :to="{ name: route.name }">{{ route.title }}</router-link>
+        <router-link v-for="route in routes" :to="{ name: route.name }" :class="isActive(route.name)">{{ route.title
+        }}</router-link>
     </nav>
 </template>
 
@@ -11,20 +12,24 @@ import { defineComponent } from 'vue';
 export default defineComponent({
     data() {
         return {
-            routes : [
+            routes: [
                 { name: 'home', title: 'Главная' },
                 { name: 'episodes', title: 'Эпизоды' },
                 { name: 'characters', title: 'Герои' },
                 { name: 'locations', title: 'Локации' },
             ]
         }
+    },
+    methods: {
+        isActive(route: string) {
+            return this.$route.path.includes(route) ? 'router-link-active' : ''
+        },
     }
 })
 
 </script>
 
 <style lang="scss" scoped>
-
 %line-below-link {
     content: '';
     position: absolute;
@@ -82,7 +87,7 @@ nav {
     }
 }
 
-/* MEDIA */ 
+/* MEDIA */
 
 @media (max-width: $breakpoint-tablet) {
     nav {
@@ -95,5 +100,4 @@ nav {
         font-size: 12px;
     }
 }
-
 </style>

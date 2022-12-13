@@ -1,7 +1,18 @@
 <template>
     <nav class="pagination">
-        <button class="pagination__button" v-if="prevPage !== null" @click="updatePage(prevPage)">Назад</button>
-        <button class="pagination__button" v-if="nextPage !== null" @click="updatePage(nextPage)">Вперед</button>
+        <ul class="pagination__pages-wrapper">
+            <button v-if="currentPage > 4" class="pagination__button" @click="updatePage(1)">В начало</button>
+            <li v-for="page in getPages" class="pages__page"
+                :class="[currentPage === page ? 'active' : '']" @click="updatePage(page)">
+                {{ page }}
+            </li>
+            <div v-if="currentPage + 4 < totalPages" class="pages__separate-wrapper">
+                <span>...</span>
+                <li class="pages__page" @click="updatePage(totalPages)">{{ totalPages }}</li>
+            </div>
+            <button v-if="currentPage + 1 <= totalPages" class="pagination__button"
+                @click="updatePage(currentPage + 1)">Дальше</button>
+        </ul>
     </nav>
 </template>
 
@@ -11,22 +22,45 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
     props: {
-        nextPage: {
+        url: {
             required: true,
+            type: String,
         },
-        prevPage: {
+        totalPages: {
             required: true,
+            type: Number,
         },
+        currentPage: {
+            required: true,
+            type: Number,
+        }
     },
     methods: {
-        updatePage(url: string | null) {
-            if (url !== null) {
-                this.$emit('updatePage', url)
-                this.scrollToTop()
-            }
+        updatePage(page: string | number) {
+            const res = this.url.replace(/page=[0-9]/, `page=${page}`)
+            
+            this.$emit('updatePage', { url: res, page: page })
+
+            this.scrollToTop()
         },
         scrollToTop() {
-            window.scrollTo(0,0)
+            window.scrollTo(0, 0)
+        }
+    },
+    computed: {
+        getPages() {
+            const result = []
+
+            const currentPage: any = this.currentPage
+
+            const { start, end } = currentPage > 2 ?
+                { start: currentPage - 2, end: currentPage + 2 } :
+                { start: currentPage - 1, end: currentPage + 4 }
+
+            for (let i = start; i < end; i += 1) {
+                if (i <= this.totalPages && i !== 0) result.push(i)
+            }
+            return result
         }
     }
 })
@@ -66,6 +100,39 @@ export default defineComponent({
     .pagination__button-active {
         @extend .pagination__button;
         opacity: 1;
+    }
+
+    .pagination__pages-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        column-gap: 10px;
+
+        .pages__page {
+            color: $color-white;
+            padding: 1.25em;
+            outline: solid $color-white 1px;
+            border-radius: 6px;
+            cursor: pointer;
+
+            &:hover {
+                outline: solid $color-green 2px;
+            }
+
+            &.active {
+                outline: solid $color-green 2px;
+
+            }
+        }
+
+        .pages__separate-wrapper {
+            color: $color-white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            column-gap: 10px;
+
+        }
     }
 
 }

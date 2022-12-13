@@ -11,7 +11,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: HomePage,
   },
   {
-    path: '/episodes/',
+    path: '/episodes',
     name: 'episodes',
     component: EpisodesPage,
   },
@@ -21,7 +21,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: EpisodePage,
   },
   {
-    path: '/characters/',
+    path: '/characters',
     name: 'characters',
     component: CharactersPage,
   },  
@@ -31,7 +31,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: CharacterPage,
   },
   {
-    path: '/locations/',
+    path: '/locations',
     name: 'locations',
     component: LocationsPage,
   },

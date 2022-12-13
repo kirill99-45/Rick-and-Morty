@@ -11,7 +11,7 @@
             </li>
         </ul>
         <Loader v-else />
-        <Pagination :prevPage="prevPage" :nextPage="nextPage" @updatePage="changePage" />
+        <Pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
     </div>
 </template>
 
@@ -22,7 +22,7 @@ import EpisodeCard from './EpisodeCard.vue';
 import { SearchInput } from '@/components/UI/index';
 import { Pagination, Loader } from '@/components/index';
 
-import { fetchPage, fetchData } from '@/helpers/api';
+import { fetchData } from '@/helpers/api';
 import { createSeasons, getSeason } from './helpers';
 import { IEpisode, ISeason } from './types';
 
@@ -40,30 +40,31 @@ export default defineComponent({
             prevPage: null,
             nextPage: null,
             isLoading: false,
+            currentPage: 1,
+            totalPages: 0,
+            url: '',
         }
     },
     methods: {
         async fetchEpisodes(url = 'https://rickandmortyapi.com/api/episode') {
             this.isLoading = true
-            await fetchData(url).then(({ data }) => {
-                const { results, info } = data
-                this.episodes = results
-                this.prevPage = info.prev
-                this.nextPage = info.next
-            }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
+            await fetchData(url)
+                .then(({ data }) => {
+                    const { results, info } = data
+                    this.episodes = results
+                    this.url = info.next || info.prev
+                    this.totalPages = info.pages
+                })
+                .catch(error => alert(`Что-то пошло не так: ${error}`))
+                .finally(() => this.isLoading = false)
         },
         async searchEpisode(query: string) {
             const URL = 'https://rickandmortyapi.com/api/episode/?name='
             this.fetchEpisodes(URL + query)
         },
-        async changePage(url: string | null) {
-            if (url === null) return
-
-            const { data, prev, next } = await fetchPage(url)
-            this.episodes = data
-
-            this.prevPage = prev
-            this.nextPage = next
+        async changePage({ url, page }:{url: string, page: number}) {
+            this.fetchEpisodes(url)
+            this.currentPage = page
         }
     },
     computed: {
@@ -169,6 +170,7 @@ export default defineComponent({
 @media (max-width: $breakpoint-mobile) {
     .episode__wrapper {
         font-size: 14px;
+
         .episode__seasons-wrapper {
 
             .episode__season-wrapper {
