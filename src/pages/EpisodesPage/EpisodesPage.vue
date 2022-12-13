@@ -90,7 +90,6 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     row-gap: 1.875em;
-    min-height: 100vh;
     width: 100%;
 
     .episode__filter {

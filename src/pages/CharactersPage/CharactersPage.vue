@@ -35,7 +35,6 @@ export default defineComponent({
     data() {
         return {
             characters: [] as ICharacter[],
-            isFilterActive: false,
             filterState: 'All',
             options: ['All', 'Alive', 'Unknown', 'Dead'],
             searchQuery: '',
@@ -57,9 +56,6 @@ export default defineComponent({
                 })
                 .catch(error => alert(`Что-то пошло не так: ${error}`))
                 .finally(() => this.isLoading = false)
-        },
-        handleFilterClick() {
-            return this.isFilterActive = !this.isFilterActive
         },
         setFilterState(option: string) {
             this.filterState = option
@@ -106,7 +102,6 @@ export default defineComponent({
         .select {
             width: 9.375em;
             margin-left: 0.625em;
-
         }
 
         .characters__button {

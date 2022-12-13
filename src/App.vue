@@ -67,6 +67,7 @@ export default defineComponent({
     display: flex;
     justify-content: center;
     padding: 1.25em;
+    min-height: 100vh;
   }
 }
 </style>

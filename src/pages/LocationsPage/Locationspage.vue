@@ -84,7 +84,6 @@ export default defineComponent({
     row-gap: 1.25em;
     width: 100%;
     justify-content: space-between;
-    min-height: 100vh;
 
     .locations__list {
         display: grid;

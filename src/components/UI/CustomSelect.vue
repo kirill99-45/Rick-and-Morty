@@ -33,6 +33,7 @@ export default defineComponent({
     methods: {
         setFilterState(option: string) {
             this.$emit('setFilter', option)
+            this.isSelectActive = false
         },
         selectHandleClick() {
             this.isSelectActive = !this.isSelectActive
