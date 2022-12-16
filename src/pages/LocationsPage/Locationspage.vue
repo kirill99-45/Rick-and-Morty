@@ -99,6 +99,7 @@ export default defineComponent({
             text-decoration: none;
             color: $color-white;
             background-color: $color-gray;
+            border: solid $color-gray;
 
             h4 {
                 color: $color-light-gray;
@@ -110,7 +111,7 @@ export default defineComponent({
             }
 
             &:hover {
-                outline: solid $color-orange;
+                border: solid $color-orange;
             }
         }
     }

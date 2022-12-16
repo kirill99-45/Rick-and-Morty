@@ -32,6 +32,8 @@ export default defineComponent({
     border-radius: 12px;
     padding: 0.625em;
     overflow: hidden;
+    border: solid $color-gray;
+
 
     a {
         text-decoration: none;
@@ -62,7 +64,7 @@ export default defineComponent({
     }
 
     &:hover {
-        outline: solid $color-orange;
+        border: solid $color-orange;
     }
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <li class="episode__character-card" v-if="!isLoading">
+    <li class="episode__character-card" v-if="!isLoading && character.id" :key="character.id">
         <div class="img__wrapper">
             <img :src="character.image" />
         </div>
@@ -13,14 +13,17 @@
             </div>
             <h3 class="character-card__location">
                 Location:
-                <span>{{ character.location?.name }}</span>
+                <router-link :to="{ name: 'selected location', params: { id: getLocationsId } }">{{
+                        character.location?.name
+                }}</router-link>
             </h3>
-            <router-link :to="{ name: 'selected character', params: { id: getCharacterId }}" class="character-card__link ">
+            <router-link :to="{ name: 'selected character', params: { id: getCharacterId } }"
+                class="character-card__link ">
                 Узнать больше
             </router-link>
         </div>
     </li>
-    <Loader v-else/>
+    <Loader v-else />
 </template>
 
 <script lang="ts">
@@ -54,13 +57,15 @@ export default defineComponent({
             this.isLoading = true
             await fetchData(this.url).then(({ data }) => {
                 this.character = data
+                console.log(data);
+
                 this.getCircleColor()
             }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => {
                 this.isLoading = false
             })
         },
         getCircleColor() {
-            const colors = { green : '#55cc44', red : '#d63d2e', gray : '#9e9e9e' }
+            const colors = { green: '#55cc44', red: '#d63d2e', gray: '#9e9e9e' }
 
             const status = this.character.status.toLowerCase()
 
@@ -74,6 +79,9 @@ export default defineComponent({
             const array = this.url.split('/')
             return array[array.length - 1]
         },
+        getLocationsId() {
+            return this.character.url.split('/').reverse()[0]
+        }
     },
     mounted() {
         this.getChatacter()
@@ -88,9 +96,11 @@ export default defineComponent({
     background-color: $color-gray;
     border-radius: 12px;
     overflow: hidden;
+    border: solid $color-gray;
+    outline: none;
 
     &:hover {
-        outline: solid $color-orange;
+        border: solid $color-orange;
     }
 
     .img__wrapper {
@@ -119,6 +129,7 @@ export default defineComponent({
             font-size: 1.5em;
             font-weight: 800;
         }
+
         .character-card__status {
             display: flex;
             position: relative;
@@ -144,10 +155,16 @@ export default defineComponent({
             color: $color-light-gray;
             font-size: 0.875em;
 
-            span {
+            a {
+                text-decoration: none;
+                color: $color-white;
                 color: $color-white;
                 font-size: 1em;
                 font-weight: normal;
+
+                &:hover {
+                    text-decoration: underline;
+                }
             }
         }
 

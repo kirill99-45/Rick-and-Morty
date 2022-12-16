@@ -16,6 +16,10 @@
                         class="character__episode">
                         {{ getEpisodeId(episode) }}
                     </router-link>
+                    <div class="character__tooltype">
+                        <h3>Название: Pilot</h3>
+                        <h3>Дата выхода: December 2, 2013</h3>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -47,6 +51,7 @@ export default defineComponent({
             this.isLoading = true
             const URL = 'https://rickandmortyapi.com/api/character/'
             await fetchData(URL + this.$route.params.id).then(({ data }) => {
+                console.log(data);
                 this.character = data
             }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
         },
@@ -103,25 +108,59 @@ export default defineComponent({
             grid-template-columns: repeat(8, 1fr);
             gap: 0.625em;
 
-            .character__episode {
-                border: solid 1px;
-                border-radius: 12px;
-                padding: 0.313em;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: $color-white;
-                text-decoration: none;
+            li {
+                position: relative;
+
+                .character__episode {
+                    border: solid 1px;
+                    border-radius: 6px;
+                    padding: 0.313em;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    color: $color-white;
+                    text-decoration: none;
+
+                    &:hover {
+                        border: solid $color-green 1px;
+                    }
+                }
+
+                .character__tooltype {
+                    visibility: hidden;
+                    font-size: 14px;
+                    position: absolute;
+                    bottom: -10px;
+                    right: -100%;
+                    left: 0;
+                    transform: translateY(100%);
+                    padding: 5px;
+                    border-radius: 6px;
+                    background-color: $color-white;
+                    color: $color-orange;
+                    z-index: 1;
+                }
 
                 &:hover {
-                    border: solid $color-green 1px;
+                    .character__tooltype {
+                        visibility: visible;
+                    }
+
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        bottom: -10px;
+                        height: 10px;
+                    }
                 }
             }
         }
     }
 }
 
-/* MEDIA */ 
+/* MEDIA */
 
 @media (max-width: $breakpoint-laptop) {
     .character__wrapper {
@@ -137,6 +176,7 @@ export default defineComponent({
 @media (max-width: $breakpoint-tablet) {
     .character__wrapper {
         font-size: 14px;
+
         .character__info {
             .character__episodes {
                 grid-template-columns: repeat(4, 1fr);
@@ -148,6 +188,7 @@ export default defineComponent({
 @media (max-width: $breakpoint-mobile) {
     .character__wrapper {
         font-size: 12px;
+
         .character__info {
             .character__episodes {
                 grid-template-columns: repeat(2, 1fr);
@@ -159,6 +200,4 @@ export default defineComponent({
         }
     }
 }
-
-
 </style>

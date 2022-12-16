@@ -5,7 +5,7 @@
             <h2>Измерение: <span>{{ location.dimension }}</span></h2>
         </div>
         <div class="location__characters-wrapper">
-            <h3>Жители:</h3>
+            <h3>Герои:</h3>
             <hr />
             <ul v-if="location.residents?.length > 0">
                 <CharacterCard v-for="character in location.residents" :url="character" />
@@ -43,7 +43,7 @@ export default defineComponent({
 
             const URL = 'https://rickandmortyapi.com/api/location/'
 
-            await fetchData(URL + this.$route.params.id).then(({ data }) => {
+            await fetchData(URL + this.$route.params.id).then(({ data }) => {                                
                 this.location = data
             }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
         }

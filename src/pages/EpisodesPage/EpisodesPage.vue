@@ -11,7 +11,7 @@
             </li>
         </ul>
         <Loader v-else />
-        <Pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
+    <Pagination v-if="totalPages > 1" :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
     </div>
 </template>
 
@@ -62,7 +62,7 @@ export default defineComponent({
             const URL = 'https://rickandmortyapi.com/api/episode/?name='
             this.fetchEpisodes(URL + query)
         },
-        async changePage({ url, page }:{url: string, page: number}) {
+        async changePage({ url, page }: { url: string, page: number }) {
             this.fetchEpisodes(url)
             this.currentPage = page
         }
@@ -91,6 +91,7 @@ export default defineComponent({
     flex-direction: column;
     row-gap: 1.875em;
     width: 100%;
+    min-height: 100vh;
 
     .episode__filter {
         width: 100%;

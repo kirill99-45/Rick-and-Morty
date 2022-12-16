@@ -2,6 +2,7 @@
     <div class="episode__wrapper" v-if="!isLoading">
         <header>
             <h2>Эпизод: {{ episode.name }}</h2>
+            <h2>Дата выхода: {{ episode.air_date }}</h2>
             <h2>Серия №{{ episode.id }}</h2>
         </header>
         <main class="episode__characters-wrapper">

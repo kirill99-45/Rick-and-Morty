@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 import {
   HomePage, EpisodesPage, EpisodePage, CharactersPage, CharacterPage, LocationsPage, LocationPage
-} from './../pages/index';
+} from '@/pages/index';
 
 export const routes: Array<RouteRecordRaw> = [
   {

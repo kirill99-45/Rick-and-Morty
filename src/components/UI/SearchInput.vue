@@ -1,6 +1,6 @@
 <template>
     <div class="input__wrapper">
-        <input :placeholder="placeholder" class="input__field" v-model="searchQuery" />
+        <input :placeholder="placeholder" class="input__field" v-model="searchQuery" @keydown.enter="searchHandleClick"/>
         <button @click="searchHandleClick" class="input__button"><img src="@/assets/search.svg" /></button>
     </div>
 </template>
