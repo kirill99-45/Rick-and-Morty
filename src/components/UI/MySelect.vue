@@ -4,7 +4,7 @@
         <img src="@/assets/arrow-down.svg" alt="Close icon" class="icon" />
         <ul class="select__options" @click="selectHandleClick">
             <li v-for="option in options" :class="[option === filterState ? 'select__option-hidden' : 'select__option']"
-                @click='setFilterState(option)'>
+                @click='setFilterState(option)' :key="option">
                 {{ option }}
             </li>
         </ul>
@@ -33,11 +33,31 @@ export default defineComponent({
     methods: {
         setFilterState(option: string) {
             this.$emit('setFilter', option)
+            this.isSelectActive = false
+            
         },
         selectHandleClick() {
             this.isSelectActive = !this.isSelectActive
         },
-    }
+        getClick(event: MouseEvent) {
+            if (this.isSelectActive) {
+
+                const target = (event.target as HTMLElement)
+                const parentWrapper = target.closest('.select')
+
+                if (!parentWrapper) {
+                    this.isSelectActive = false
+                }
+            }
+        }
+    },
+    mounted() {
+        window.addEventListener('click', this.getClick)
+    },
+    unmounted() {
+        window.removeEventListener('click', this.getClick)
+        
+    },
 })
 
 </script>

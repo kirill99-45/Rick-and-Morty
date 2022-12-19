@@ -1,15 +1,15 @@
 <template>
     <div class="characters__wrapper">
         <div class="characters__filters-wrapper">
-            <SearchInput class="input" @search="searchCharacters" />
-            <CustomSelect :options="options" :filterState="filterState" @setFilter="setFilterState" class="select" />
+            <my-search-input class="input" @search="searchCharacters" />
+            <my-select :options="options" :filterState="filterState" @setFilter="setFilterState" class="select" />
         </div>
         <hr />
         <ul class="characters__list" v-if="!isLoading">
-            <CharacterCard v-for="character in characters" :url="character.url" :key="character.id" />
+            <character-card v-for="character in characters" :url="character.url" :key="character.id"/>
         </ul>
-        <Loader v-else />
-        <Pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
+        <my-loader v-else />
+        <my-pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" class="characters__pagination"/>
     </div>
 </template>
 
@@ -19,67 +19,82 @@ import { defineComponent } from 'vue';
 import { CharacterCard } from '@/components/index';
 import { ICharacter } from './types';
 
-import { SearchInput, CustomSelect } from '@/components/UI/index';
-import { Pagination, Loader } from '@/components/index';
+import { MySearchInput, MySelect } from '@/components/UI/index';
+import { MyPagination, MyLoader } from '@/components/index';
 
 import { fetchData } from '@/helpers/api';
 
 export default defineComponent({
     components: {
         CharacterCard,
-        Pagination,
-        SearchInput,
-        CustomSelect,
-        Loader,
+        MyPagination,
+        MySearchInput,
+        MySelect,
+        MyLoader,
     },
     data() {
         return {
             characters: [] as ICharacter[],
-            filterState: 'All',
+            filterState: '',
             options: ['All', 'Alive', 'Unknown', 'Dead'],
             searchQuery: '',
             isLoading: false,
             url: '',
-            currentPage: 1,
+            currentPage: 1 as number,
             totalPages: 0,
         }
     },
     methods: {
         async fetchCharacters(url = 'https://rickandmortyapi.com/api/character') {
+            if (Number(this.$route.query.page) !== 1 && url === 'https://rickandmortyapi.com/api/character') {
+                url = `https://rickandmortyapi.com/api/character?page=${this.$route.query.page}`
+            }
+
             this.isLoading = true
             await fetchData(url)
+            
                 .then(({ data }) => {
                     const { results, info } = data
+
                     this.characters = results
                     this.totalPages = info.pages
-                    this.url = info.next || info.prev
+
+                    this.url = info.prev || info.next
+
+                    this.currentPage = Number(this.$route.query.page)
+                    this.filterState = this.$route.query.status?.toString() || 'All'
                 })
                 .catch(error => alert(`Что-то пошло не так: ${error}`))
                 .finally(() => this.isLoading = false)
         },
         setFilterState(option: string) {
-            this.filterState = option
+
+            if (option === this.filterState) return
+            this.$router.push({ query: { page: 1, status: option } })
+
+            if (option === 'All') this.fetchCharacters()
+            
+            else {
+                const URL = 'https://rickandmortyapi.com/api/character/?status='
+                this.fetchCharacters(URL + option)
+            }
         },
         async changePage({ url, page }: { url: string, page: number }) {
+            this.$router.push({ query: { page: page, status: this.filterState } })
             this.fetchCharacters(url)
-            this.currentPage = page
         },
-        async searchCharacters(qeury: string) {
+        async searchCharacters(query: string) {
             const URL = 'https://rickandmortyapi.com/api/character/?name='
-            this.fetchCharacters(URL + qeury)
-        }
-    },
-    watch: {
-        async filterState(newFilterState) {
-            if (newFilterState === 'All') this.fetchCharacters()
-            else {
-                const URL = 'https://rickandmortyapi.com/api/character/?name=rick&status='
-                this.fetchCharacters(URL + newFilterState)
-            }
+            this.fetchCharacters(URL + query)
         },
     },
     mounted() {
-        this.fetchCharacters()
+        if (this.$route.query.status?.toString() !== 'All') {
+            const URL = `https://rickandmortyapi.com/api/character/?page=${this.$route.query.page || 1}&status=${this.$route.query.status}`
+            this.fetchCharacters(URL)
+        } else {
+            this.fetchCharacters()
+        }
     }
 })
 
@@ -91,7 +106,7 @@ export default defineComponent({
     flex-direction: column;
     row-gap: 1.25em;
     width: 100%;
-
+    min-height: 80vh;
     .characters__filters-wrapper {
         display: flex;
 
@@ -103,29 +118,12 @@ export default defineComponent({
             width: 9.375em;
             margin-left: 0.625em;
         }
-
-        .characters__button {
-            width: 1.875em;
-            border-radius: 6px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-left: 0.313em;
-            border: none;
-            cursor: pointer;
-
-            img {
-                width: 100%;
-                height: 100%;
-                padding: 0.313em;
-                object-fit: contain;
-            }
-        }
     }
 
     .characters__list {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(10, 1fr);
         gap: 1.875em;
     }
 }

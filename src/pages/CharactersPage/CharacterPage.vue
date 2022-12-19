@@ -24,7 +24,7 @@
             </ul>
         </div>
     </div>
-    <Loader v-else />
+    <my-loader v-else />
 </template>
 
 <script lang="ts">
@@ -33,11 +33,11 @@ import { defineComponent } from 'vue';
 import { ICharacter } from '@/pages/CharactersPage/types';
 import { fetchData } from '@/helpers/api';
 
-import { Loader } from '@/components/index'
+import { MyLoader } from '@/components/index'
 
 export default defineComponent({
     components: {
-        Loader,
+        MyLoader,
     },
     data() {
         return {

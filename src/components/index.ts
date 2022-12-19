@@ -1,6 +1,6 @@
 import Navbar from './Navbar.vue';
-import Pagination from './Pagination.vue';
-import Loader from './Loader.vue';
+import MyPagination from './MyPagination.vue';
+import MyLoader from './MyLoader.vue';
 import CharacterCard from './CharacterCard.vue';
 
-export { Navbar, Pagination, Loader, CharacterCard }
+export { Navbar, MyPagination, MyLoader, CharacterCard }

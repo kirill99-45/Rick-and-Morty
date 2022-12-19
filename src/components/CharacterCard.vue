@@ -1,5 +1,5 @@
 <template>
-    <li class="episode__character-card" v-if="!isLoading && character.id" :key="character.id">
+    <li class="character-card" v-if="!isLoading && character.id" :key="character.id">
         <div class="img__wrapper">
             <img :src="character.image" />
         </div>
@@ -13,7 +13,7 @@
             </div>
             <h3 class="character-card__location">
                 Location:
-                <router-link :to="{ name: 'selected location', params: { id: getLocationsId } }">{{
+                <router-link :to="{ name: 'selected location', params: { id: getLocationId } }">{{
                         character.location?.name
                 }}</router-link>
             </h3>
@@ -23,7 +23,7 @@
             </router-link>
         </div>
     </li>
-    <Loader v-else />
+    <my-loader v-else />
 </template>
 
 <script lang="ts">
@@ -32,12 +32,12 @@ import { fetchData } from '@/helpers/api';
 import { defineComponent } from 'vue';
 import { ICharacter } from '@/pages/CharactersPage/types';
 
-import { Loader } from '@/components/index';
+import { MyLoader } from '@/components/index';
 
 
 export default defineComponent({
     components: {
-        Loader,
+        MyLoader,
     },
     props: {
         url: {
@@ -57,8 +57,6 @@ export default defineComponent({
             this.isLoading = true
             await fetchData(this.url).then(({ data }) => {
                 this.character = data
-                console.log(data);
-
                 this.getCircleColor()
             }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => {
                 this.isLoading = false
@@ -79,7 +77,7 @@ export default defineComponent({
             const array = this.url.split('/')
             return array[array.length - 1]
         },
-        getLocationsId() {
+        getLocationId() {
             return this.character.url.split('/').reverse()[0]
         }
     },
@@ -91,7 +89,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.episode__character-card {
+.character-card {
     display: flex;
     background-color: $color-gray;
     border-radius: 12px;
@@ -105,6 +103,7 @@ export default defineComponent({
 
     .img__wrapper {
         width: 50%;
+        height: 100%;
         overflow: hidden;
 
         img {

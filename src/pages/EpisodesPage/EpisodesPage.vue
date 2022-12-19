@@ -1,6 +1,6 @@
 <template>
     <div class="episode__wrapper">
-        <SearchInput @search="searchEpisode" />
+        <my-search-input @search="searchEpisode" />
         <ul class="episode__seasons-wrapper" v-if="!isLoading">
             <li v-for="season in sortedSeasons"
                 :class="[season.episodes.length > 0 ? 'episode__season-wrapper' : 'episode__season-hidden']">
@@ -10,8 +10,8 @@
                 </ul>
             </li>
         </ul>
-        <Loader v-else />
-    <Pagination v-if="totalPages > 1" :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
+        <my-loader v-else />
+    <my-pagination v-if="totalPages > 1" :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
     </div>
 </template>
 
@@ -19,8 +19,8 @@
 import { defineComponent } from 'vue';
 
 import EpisodeCard from './EpisodeCard.vue';
-import { SearchInput } from '@/components/UI/index';
-import { Pagination, Loader } from '@/components/index';
+import { MySearchInput } from '@/components/UI/index';
+import { MyPagination, MyLoader } from '@/components/index';
 
 import { fetchData } from '@/helpers/api';
 import { createSeasons, getSeason } from './helpers';
@@ -29,9 +29,9 @@ import { IEpisode, ISeason } from './types';
 export default defineComponent({
     components: {
         EpisodeCard,
-        Pagination,
-        SearchInput,
-        Loader,
+        MyPagination,
+        MySearchInput,
+        MyLoader,
     },
     data() {
         return {

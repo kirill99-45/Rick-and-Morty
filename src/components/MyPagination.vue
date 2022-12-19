@@ -37,8 +37,9 @@ export default defineComponent({
     },
     methods: {
         updatePage(page: string | number) {
-            const res = this.url.replace(/page=[0-9]/, `page=${page}`)
-            
+            const newPage = `page=${page}`
+
+            const res = this.url.replace(/page=([0-9][0-9]{0,2})/, newPage)
             this.$emit('updatePage', { url: res, page: page })
 
             this.scrollToTop()
@@ -62,6 +63,10 @@ export default defineComponent({
             }
             return result
         }
+    },
+    mounted() {
+        console.log(this.url);
+        
     }
 })
 

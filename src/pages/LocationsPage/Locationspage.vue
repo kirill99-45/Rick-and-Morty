@@ -1,6 +1,6 @@
 <template>
     <div class="locations__wrapper">
-        <SearchInput @search="searchLocation" />
+        <my-search-input @search="searchLocation" />
         <ul class="locations__list" v-if="!isLoading">
             <li v-for="location in locations">
                 <router-link :to="{ name: 'selected location', params: { id: location.id } }"
@@ -14,26 +14,26 @@
                 </router-link>
             </li>
         </ul>
-        <Loader v-else />
+        <my-loader v-else />
         <hr />
-        <Pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage"/>
+        <my-pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage"/>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { Pagination, Loader } from '@/components/index';
-import { SearchInput } from '@/components/UI/index';
+import { MyPagination, MyLoader } from '@/components/index';
+import { MySearchInput } from '@/components/UI/index';
 
 import { fetchData } from '@/helpers/api';
 import { ILocation } from './types';
 
 export default defineComponent({
     components: {
-        Pagination,
-        SearchInput,
-        Loader,
+        MyPagination,
+        MySearchInput,
+        MyLoader,
     },
     data() {
         return {

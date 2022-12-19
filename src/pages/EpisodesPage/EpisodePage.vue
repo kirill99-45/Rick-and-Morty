@@ -8,11 +8,11 @@
         <main class="episode__characters-wrapper">
             <h2>Герои</h2>
             <ul class="episode__characters-list">
-                <CharacterCard v-for="character in episode.characters" :url="character" />
+                <character-card v-for="character in episode.characters" :url="character" />
             </ul>
         </main>
     </div>
-    <Loader v-else />
+    <my-loader v-else />
 </template>
 
 <script lang="ts">
@@ -22,12 +22,12 @@ import { IEpisode } from './types';
 import { fetchData } from '@/helpers/api';
 
 import CharacterCard from '../../components/CharacterCard.vue';
-import { Loader } from '@/components/index'
+import { MyLoader } from '@/components/index'
 
 export default defineComponent({
     components: {
         CharacterCard,
-        Loader,
+        MyLoader,
     },
     data() {
         return {

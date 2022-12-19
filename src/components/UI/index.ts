@@ -1,4 +1,4 @@
-import CustomSelect from './CustomSelect.vue'
-import SearchInput from './SearchInput.vue';
+import MySelect from './MySelect.vue'
+import MySearchInput from './MySearchInput.vue';
 
-export { CustomSelect, SearchInput }
+export { MySelect, MySearchInput }

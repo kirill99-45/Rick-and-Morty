@@ -8,12 +8,12 @@
             <h3>Герои:</h3>
             <hr />
             <ul v-if="location.residents?.length > 0">
-                <CharacterCard v-for="character in location.residents" :url="character" />
+                <character-card v-for="character in location.residents" :url="character" />
             </ul>
             <h3 v-else class="location__characters-emty">Видимо тут пусто...</h3>
         </div>
     </div>
-    <Loader v-else />
+    <my-loader v-else />
 </template>
 
 <script lang="ts">
@@ -23,13 +23,13 @@ import { ILocation } from './types';
 import { fetchData } from '@/helpers/api';
 
 import CharacterCard from '../../components/CharacterCard.vue'
-import { Loader } from '@/components/index';
+import { MyLoader } from '@/components/index';
 
 
 export default defineComponent({
     components: {
         CharacterCard,
-        Loader,
+        MyLoader,
     },
     data() {
         return {
@@ -42,8 +42,9 @@ export default defineComponent({
             this.isLoading = true
 
             const URL = 'https://rickandmortyapi.com/api/location/'
+            const locationId =  this.$route.params.id
 
-            await fetchData(URL + this.$route.params.id).then(({ data }) => {                                
+            await fetchData(URL + locationId).then(({ data }) => {                                
                 this.location = data
             }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => this.isLoading = false)
         }
