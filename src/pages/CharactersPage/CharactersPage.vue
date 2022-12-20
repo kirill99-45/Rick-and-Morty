@@ -18,12 +18,11 @@
 import { defineComponent } from 'vue';
 
 import { CharacterCard } from '@/components/index';
-import { ICharacter } from './types';
 
 import { MySearchInput, MySelect } from '@/components/UI/index';
 import { MyPagination, MyLoader } from '@/components/index';
 
-import { fetchData } from '@/helpers/api';
+import { mapActions, mapState } from 'vuex';
 
 export default defineComponent({
     components: {
@@ -33,61 +32,26 @@ export default defineComponent({
         MySelect,
         MyLoader,
     },
-    data() {
-        return {
-            characters: [] as ICharacter[],
-            filterState: '',
-            options: ['All', 'Alive', 'Unknown', 'Dead'],
-            searchQuery: '',
-            isLoading: false,
-            url: '',
-            currentPage: 1 as number,
-            totalPages: 0,
-        }
-    },
     methods: {
-        async fetchCharacters(url = 'https://rickandmortyapi.com/api/character') {
-            if (Number(this.$route.query.page) !== 1 && url === 'https://rickandmortyapi.com/api/character') {
-                url = `https://rickandmortyapi.com/api/character?page=${this.$route.query.page}`
-            }
-
-            this.isLoading = true
-            await fetchData(url)
-
-                .then(({ data }) => {
-                    const { results, info } = data
-
-                    this.characters = results
-                    this.totalPages = info.pages
-
-                    this.url = info.prev || info.next
-
-                    this.currentPage = Number(this.$route.query.page)
-                    this.filterState = this.$route.query.status?.toString() || 'All'
-                })
-                .catch(error => alert(`Что-то пошло не так: ${error}`))
-                .finally(() => this.isLoading = false)
-        },
-        setFilterState(option: string) {
-
-            if (option === this.filterState) return
-            this.$router.push({ query: { page: 1, status: option } })
-
-            if (option === 'All') this.fetchCharacters()
-
-            else {
-                const URL = 'https://rickandmortyapi.com/api/character/?status='
-                this.fetchCharacters(URL + option)
-            }
-        },
-        async changePage({ url, page }: { url: string, page: number }) {
-            this.$router.push({ query: { page: page, status: this.filterState } })
-            this.fetchCharacters(url)
-        },
-        async searchCharacters(query: string) {
-            const URL = 'https://rickandmortyapi.com/api/character/?name='
-            this.fetchCharacters(URL + query)
-        },
+        ...mapActions({
+            fetchCharacters: 'characters/fetchCharacters',
+            setFilterState: 'characters/setFilterState',
+            changePage: 'characters/changePage',
+            searchCharacters: 'characters/searchCharacters',
+        }),
+    },
+    computed: {
+        ...mapState({
+            characters: (state: any) => state.characters.characters,
+            isFilterActive: (state: any) => state.characters.isFilterActive,
+            filterState: (state: any) => state.characters.filterState,
+            options: (state: any) => state.characters.options,
+            searchQuery: (state: any) => state.characters.searchQuery,
+            currentPage: (state: any) => state.characters.currentPage,
+            totalPages: (state: any) => state.characters.totalPages,
+            isLoading: (state: any) => state.characters.isLoading,
+            url: (state: any) => state.characters.url,
+        }),
     },
     mounted() {
         if (this.$route.query.status?.toString() !== 'All') {

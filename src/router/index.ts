@@ -4,7 +4,7 @@ import {
   HomePage, EpisodesPage, EpisodePage, CharactersPage, CharacterPage, LocationsPage, LocationPage
 } from '@/pages/index';
 
-export const routes: Array<RouteRecordRaw> = [
+const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',

@@ -1,7 +1,8 @@
 import { ICharacter } from '@/pages/CharactersPage/types';
 import { fetchData } from '@/helpers/api';
+import router from '@/router/index'
 
-export const charactersModule  = {
+export const charactersModule = {
     state() {
         return {
             characters: [] as ICharacter[],
@@ -9,25 +10,14 @@ export const charactersModule  = {
             filterState: 'All',
             options: ['All', 'Alive', 'Unknown', 'Dead'],
             searchQuery: '',
-            prevPage: null as null | string,
-            nextPage: null as null | string,
+            currentPage: 1,
+            totalPages: 1,
             isLoading: false,
+            url: '',
         }
     },
     getters: {
-        allCharacters(state: any) { // TODO PROPS TYPE (!)
-            return state.characters
-        },
-    },
-    actions: {
-        async fetchCharacters(ctx: any, url = 'https://rickandmortyapi.com/api/character') {
-            await fetchData(url).then(({ data }) => {
-                const { results, info } = data
-                ctx.commit('setCharactes', results)
-                ctx.commit('setPrevPage', info.prevPage)
-                ctx.commit('setNextPage', info.NextPage)
-            }).catch(error => alert(`Что-то пошло не так: ${error}`)).finally(() => ctx.commit('setIsLoading', false))
-        },
+
     },
     mutations: {
         setCharacters(state: any, characters: ICharacter[]) {
@@ -39,15 +29,69 @@ export const charactersModule  = {
         setSearchQuery(state: any, searchQuery: string) {
             state.searchQuery = searchQuery
         },
-        setNextPage(state: any, nextPage: string) {
-            state.nextPage = nextPage
+        setCurrentPage(state: any, page: number) {
+            state.currentPage = page
         },
-        setPrevPage(state: any, prevPage: string) {
-            state.prevPage = prevPage
+        setTotalPages(state: any, count: number) {
+            state.totalPages = count
         },
-        setIsLoading(state: any, isLoading: boolean) {
-            state.isLoading = isLoading
+        setIsLoading(state: any, bool: boolean) {
+            state.isLoading = bool
         },
-    }
-    // namespaced: true,
+        setUrl(state: any, url: string) {
+            state.url = url
+        },
+    },
+    actions: {
+        async fetchCharacters(ctx: any, url = 'https://rickandmortyapi.com/api/character') {
+            const currentPage = Number(router.currentRoute.value.query.page)
+
+            if (currentPage !== 1 && url === 'https://rickandmortyapi.com/api/character') {
+                url = `https://rickandmortyapi.com/api/character?page=${currentPage}`
+                ctx.commit('setCurrentPage', currentPage)
+            }
+
+            ctx.commit('setIsLoading', true)
+            await fetchData(url)
+
+                .then(({ data }) => {
+                    const { results, info } = data
+
+                    ctx.commit('setCharacters', results)
+                    ctx.commit('setTotalPages', info.pages)
+
+                    const url = info.prev || info.next
+                    ctx.commit('setUrl', url)
+
+                    ctx.commit('setFilterState', router.currentRoute.value.query.status || 'All')
+                })
+                .catch(error => alert(`Что-то пошло не так: ${error}`))
+                .finally(() => ctx.commit('setIsLoading', false))
+        },
+        setFilterState(ctx: any, option: string) {
+
+            if (option === ctx.state.filterState) return
+            router.push({ query: { page: 1, status: option } })
+
+            if (option === 'All') ctx.dispatch('fetchCharacters')
+
+            else {
+                const URL = 'https://rickandmortyapi.com/api/character/?status='
+                ctx.dispatch('fetchCharacters', URL + option)
+                ctx.commit('setCurrentPage', 1)
+
+            }
+        },
+        changePage(ctx: any, { url, page }: { url: string, page: number }) {
+            router.push({ query: { page: page, status: ctx.state.filterState } })
+            ctx.commit('setCurrentPage', page)
+            ctx.dispatch('fetchCharacters', url)
+
+        },
+        searchCharacters(ctx: any, query: string) {
+            const URL = 'https://rickandmortyapi.com/api/character/?name='
+            ctx.dispatch('fetchCharacters', URL + query)
+        },
+    },
+    namespaced: true,
 }
