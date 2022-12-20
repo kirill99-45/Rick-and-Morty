@@ -1,7 +1,8 @@
 <template>
     <nav>
-        <router-link v-for="route in routes" :to="{ name: route.name }" :class="isActive(route.name)">{{ route.title
-        }}</router-link>
+        <router-link v-for="route in routes" :to="route.to" :class="isActive(route.to.name)">
+            {{ route.title }}
+        </router-link>
     </nav>
 </template>
 
@@ -13,10 +14,18 @@ export default defineComponent({
     data() {
         return {
             routes: [
-                { name: 'home', title: 'Главная' },
-                { name: 'episodes', title: 'Эпизоды' },
-                { name: 'characters', title: 'Герои' },
-                { name: 'locations', title: 'Локации' },
+                {
+                    to: { name: 'home' }, title: 'Главная',
+                },
+                {
+                    to: { name: 'episodes' }, title: 'Эпизоды',
+                },
+                {
+                    to: { name: 'characters', title: 'Герои', query: { page: 1, status: 'All' } }, title: 'Герои',
+                },
+                {
+                    to: { name: 'locations' }, title: 'Локации',
+                },
             ]
         }
     },

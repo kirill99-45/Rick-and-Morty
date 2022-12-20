@@ -5,11 +5,12 @@
             <my-select :options="options" :filterState="filterState" @setFilter="setFilterState" class="select" />
         </div>
         <hr />
-        <ul class="characters__list" v-if="!isLoading">
-            <character-card v-for="character in characters" :url="character.url" :key="character.id"/>
+        <ul class="characters__list" v-show="!isLoading">
+            <character-card v-for="character in characters" :url="character.url" :key="character.id" />
         </ul>
-        <my-loader v-else />
-        <my-pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" class="characters__pagination"/>
+        <my-loader v-show="isLoading" />
+        <my-pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage"
+            class="characters__pagination" />
     </div>
 </template>
 
@@ -52,7 +53,7 @@ export default defineComponent({
 
             this.isLoading = true
             await fetchData(url)
-            
+
                 .then(({ data }) => {
                     const { results, info } = data
 
@@ -73,7 +74,7 @@ export default defineComponent({
             this.$router.push({ query: { page: 1, status: option } })
 
             if (option === 'All') this.fetchCharacters()
-            
+
             else {
                 const URL = 'https://rickandmortyapi.com/api/character/?status='
                 this.fetchCharacters(URL + option)
@@ -107,6 +108,7 @@ export default defineComponent({
     row-gap: 1.25em;
     width: 100%;
     min-height: 80vh;
+
     .characters__filters-wrapper {
         display: flex;
 
@@ -123,8 +125,9 @@ export default defineComponent({
     .characters__list {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(10, 1fr);
+        grid-template-rows: repeat(auto-fill, 1fr);
         gap: 1.875em;
+        min-height: 100vh;
     }
 }
 

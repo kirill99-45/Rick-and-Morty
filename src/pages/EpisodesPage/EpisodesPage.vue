@@ -2,7 +2,7 @@
     <div class="episode__wrapper">
         <my-search-input @search="searchEpisode" />
         <ul class="episode__seasons-wrapper" v-if="!isLoading">
-            <li v-for="season in sortedSeasons"
+            <li v-for="season in getSortedSeasons"
                 :class="[season.episodes.length > 0 ? 'episode__season-wrapper' : 'episode__season-hidden']">
                 <h2>Сезон {{ season.id }}</h2>
                 <ul class="episode__cards-wrapper">
@@ -11,7 +11,8 @@
             </li>
         </ul>
         <my-loader v-else />
-    <my-pagination v-if="totalPages > 1" :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
+        <my-pagination v-if="totalPages > 1" :url="url" :currentPage="currentPage" :totalPages="totalPages"
+            @updatePage="changePage" />
     </div>
 </template>
 
@@ -20,11 +21,10 @@ import { defineComponent } from 'vue';
 
 import EpisodeCard from './EpisodeCard.vue';
 import { MySearchInput } from '@/components/UI/index';
+
 import { MyPagination, MyLoader } from '@/components/index';
 
-import { fetchData } from '@/helpers/api';
-import { createSeasons, getSeason } from './helpers';
-import { IEpisode, ISeason } from './types';
+import { mapActions, mapGetters, mapState } from 'vuex';
 
 export default defineComponent({
     components: {
@@ -33,50 +33,25 @@ export default defineComponent({
         MySearchInput,
         MyLoader,
     },
-    data() {
-        return {
-            episodes: [] as IEpisode[],
-            searchQuery: '',
-            prevPage: null,
-            nextPage: null,
-            isLoading: false,
-            currentPage: 1,
-            totalPages: 0,
-            url: '',
-        }
-    },
     methods: {
-        async fetchEpisodes(url = 'https://rickandmortyapi.com/api/episode') {
-            this.isLoading = true
-            await fetchData(url)
-                .then(({ data }) => {
-                    const { results, info } = data
-                    this.episodes = results
-                    this.url = info.next || info.prev
-                    this.totalPages = info.pages
-                })
-                .catch(error => alert(`Что-то пошло не так: ${error}`))
-                .finally(() => this.isLoading = false)
-        },
-        async searchEpisode(query: string) {
-            const URL = 'https://rickandmortyapi.com/api/episode/?name='
-            this.fetchEpisodes(URL + query)
-        },
-        async changePage({ url, page }: { url: string, page: number }) {
-            this.fetchEpisodes(url)
-            this.currentPage = page
-        }
+        ...mapActions({
+            fetchEpisodes: 'episodes/fetchEpisodes',
+            searchEpisode: 'episodes/searchEpisode',
+            changePage: 'episodes/changePage',
+        })
     },
     computed: {
-        sortedSeasons(): ISeason[] {
-            const seasons = createSeasons()
-
-            this.episodes.forEach((episode: IEpisode) => {
-                seasons[getSeason(episode.id)].episodes.push(episode)
-            })
-
-            return seasons
-        },
+        ...mapState({
+            episodes: (state: any) => state.episodes.episodes,
+            searchQuery: (state: any) => state.episodes.searchQuery,
+            isLoading: (state: any) => state.episodes.isLoading,
+            currentPage: (state: any) => state.episodes.currentPage,
+            totalPages: (state: any) => state.episodes.totalPages,
+            url: (state: any) => state.episodes.url,
+        }),
+        ...mapGetters({
+            getSortedSeasons: 'episodes/getSortedSeasons',
+        }),
     },
     mounted() {
         this.fetchEpisodes()

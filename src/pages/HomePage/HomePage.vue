@@ -2,7 +2,7 @@
     <div class="home__wrapper">
         <ul>
             <li class="routes-card__wrapper" :class="route.path" title="Перейти" v-for="route in routes">
-                <router-link :to="{ name: route.path, query : { status : 'All', page : '1' }}" class="img__wrapper">
+                <router-link :to="route.to" class="img__wrapper">
                     <img :src="route.img" alt="Изображение ссылки" />
                     <h3>{{ route.title }}</h3>
                 </router-link>
@@ -18,11 +18,27 @@ import { defineComponent } from 'vue';
 export default defineComponent({
     data() {
         return {
-            routes: [
-                { path: 'episodes', img: 'https://www.kp.ru/putevoditel/serialy/wp-content/uploads/2021/06/rik-i-morti-4-8.jpg', title: 'Эпизоды' },
-                { path: 'characters', img: 'https://proprikol.ru/wp-content/uploads/2020/12/kartinki-rik-i-morti-29.jpg', title: 'Герои'},
-                { path: 'locations', img: 'https://preview.redd.it/j6aefx4h98e31.png?auto=webp&s=6d8c306a1e2ae121f5cc6788e458824cb4f824e6', title: 'Локации' },
-            ]
+            routes:
+                [
+                    {
+                        to: { name: 'episodes' },
+                        title: 'Эпизоды',
+                        path: 'episodes',
+                        img: 'https://www.kp.ru/putevoditel/serialy/wp-content/uploads/2021/06/rik-i-morti-4-8.jpg'
+                    },
+                    {
+                        to: { name: 'characters', title: 'Герои', query: { page: 1, status: 'All' }},
+                        title: 'Герои',
+                        path: 'characters',
+                        img: 'https://proprikol.ru/wp-content/uploads/2020/12/kartinki-rik-i-morti-29.jpg',
+                    },
+                    {
+                        to: { name: 'locations' },
+                        title: 'Локации',
+                        path: 'locations',
+                        img: 'https://preview.redd.it/j6aefx4h98e31.png?auto=webp&s=6d8c306a1e2ae121f5cc6788e458824cb4f824e6'
+                    },
+                ]
         }
     },
 })

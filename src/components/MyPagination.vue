@@ -19,7 +19,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-
 export default defineComponent({
     props: {
         url: {
@@ -64,10 +63,6 @@ export default defineComponent({
             return result
         }
     },
-    mounted() {
-        console.log(this.url);
-        
-    }
 })
 
 </script>

@@ -1,7 +1,7 @@
 <template>
     <div class="locations__wrapper">
         <my-search-input @search="searchLocation" />
-        <ul class="locations__list" v-if="!isLoading">
+        <ul class="locations__list" v-show="!isLoading">
             <li v-for="location in locations">
                 <router-link :to="{ name: 'selected location', params: { id: location.id } }"
                     class="locations__location-card">
@@ -14,9 +14,9 @@
                 </router-link>
             </li>
         </ul>
-        <my-loader v-else />
+        <my-loader v-show="isLoading" />
         <hr />
-        <my-pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage"/>
+        <my-pagination :url="url" :currentPage="currentPage" :totalPages="totalPages" @updatePage="changePage" />
     </div>
 </template>
 
@@ -56,7 +56,7 @@ export default defineComponent({
                     this.locations = results
                     this.url = info.prev || info.next
                     this.totalPages = info.pages
-                    
+
                 })
                 .catch(error => alert(`Что-то пошло не так: ${error}`))
                 .finally(() => this.isLoading = false)
@@ -65,7 +65,7 @@ export default defineComponent({
             const URL = 'https://rickandmortyapi.com/api/location/?name='
             this.fetchLocations(URL + query)
         },
-        async changePage({ url, page }:{ url: string, page: number}) {
+        async changePage({ url, page }: { url: string, page: number }) {
             this.fetchLocations(url)
             this.currentPage = page
         }

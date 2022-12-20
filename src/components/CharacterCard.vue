@@ -1,5 +1,5 @@
 <template>
-    <li class="character-card" v-if="!isLoading && character.id" :key="character.id">
+    <li class="character-card" v-if="!isLoading">
         <div class="img__wrapper">
             <img :src="character.image" />
         </div>
@@ -23,7 +23,6 @@
             </router-link>
         </div>
     </li>
-    <my-loader v-else />
 </template>
 
 <script lang="ts">
@@ -43,18 +42,18 @@ export default defineComponent({
         url: {
             type: String,
             required: true,
-        }
+        },
     },
     data() {
         return {
             character: {} as ICharacter,
             circleColor: '',
-            isLoading: false,
+            isLoading: true,
+            location: ''
         }
     },
     methods: {
         async getChatacter() {
-            this.isLoading = true
             await fetchData(this.url).then(({ data }) => {
                 this.character = data
                 this.getCircleColor()
